@@ -20,6 +20,6 @@ env/
 env_dir/
 venv/
 ENV/
-
+.env.example
 # Mkdocs
 site
