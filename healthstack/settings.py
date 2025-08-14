@@ -156,19 +156,12 @@ STORE_ID = env('STORE_ID')
 STORE_PASSWORD = env('STORE_PASSWORD')
 STORE_NAME = env('STORE_NAME')
 
-###Mailtrap env Variables
-SMTP_HOST = env('SMTP_HOST')
-SMTP_PORT = env('SMTP_PORT')
-SMTP_USER = env('SMTP_USER')
-SMTP_PASSWORD = env('SMTP_PASSWORD')
-
-# EMAIL
-
+### Gmail SMTP Configuration
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = 'smtp.mailtrap.io'
-EMAIL_PORT = SMTP_PORT
-EMAIL_HOST_USER = SMTP_USER
-EMAIL_HOST_PASSWORD = SMTP_PASSWORD
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'marklegend029@gmail.com'
+EMAIL_HOST_PASSWORD = 'lkkvkybyhftvppvc'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 
