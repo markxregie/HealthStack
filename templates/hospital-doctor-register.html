@@ -172,67 +172,29 @@
             <!-- / Profile Sidebar -->
 
             <div class="col-md-12 col-lg-8 col-xl-9">
-              <form action="{% url 'hospital-doctor-register' pk=hospitals.hospital_id %}" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
 
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title" style="text-align: center;">Hospital Registation</h2>
-                        <hr>
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <label class="col-form-label" style="font-size: 20px;">Choose Department</label>
-                                <div class="col-md-10">
-     
-                                    {% for department in departments %}
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" value="{{ department.hospital_department_id }}" name="department_radio"> {{ department.hospital_department_name }}
-                                        </label>
-                                    </div>
-                                    {% endfor %}
-                                    
-                                    
-                                </div>
+    <form action="{% url 'hospital-doctor-register' pk=hospitals.hospital_id %}" method="POST" enctype="multipart/form-data">
+        
+        {% csrf_token %}
 
-                            </div>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title" style="text-align: center;">Hospital Registration for {{ hospitals.hospital_name }}</h2>
+                <hr>
+                <p>Please select your department and specialization for this hospital, and upload your certificate if applicable.</p>
+                
+                {# Ang isang linyang ito na ang gagawa ng lahat ng form fields (dropdowns, file upload) at magpapakita ng errors #}
+                {{ form.as_p }}
 
-                            <div class="col-md-6">
-                                <label class="col-form-label" style="font-size: 20px;">Choose Specialization</label>
-                                <div class="col-md-10">
-
-                                    {% for specialization in specializations %}
-                                      
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="{{ specialization.specialization_id }}" name="specialization_radio" id="flexRadioDefault2">
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                          {{ specialization.specialization_name }}
-                                        </label>
-                                      </div>
-                                      {% endfor %}
-                             
-                                </div>
-                            </div>                                       
-                        </div>
-
-                        <label class="col-form-label" style="font-size: 20px;text-align: center;">Drop Certificate</label>
-                        <div class="drop-zone">
-                            
-                            <span class="drop-zone__prompt">Drop file here or click to upload</span>
-                            <input type="file" name="certificate_image" class="drop-zone__input">
-                        </div>
-
-                    </div>
-                </div>
-                <div class="submit-section submit-btn-bottom center">
-                    <button type="submit" class="btn btn-info submit-btn" style="min-width: 205px;">Submit</button>
-                </div>
-              </form>  
-                          
             </div>
-          </div>
         </div>
-      </div>
+
+        <div class="submit-section submit-btn-bottom center">
+            <button type="submit" class="btn btn-info submit-btn" style="min-width: 205px;">Submit Registration</button>
+        </div>
+    </form> 
+    
+</div>
       <!-- /Page Content -->
 
      <!-- Footer -->
