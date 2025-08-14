@@ -24,6 +24,74 @@
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
+	 <style>
+        body {
+            background: linear-gradient(135deg, #f4fdf6, #e8f5ec);
+            font-family: 'Segoe UI', sans-serif;
+        }
+        .loginbox {
+            display: flex;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+            background: #fff;
+        }
+        .login-left {
+            background: linear-gradient(#fff , #95C270 ) !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+        }
+        .login-left img {
+            max-width: 400px;
+        }
+        .login-right {
+            padding: 40px;
+            flex: 1;
+        }
+        .login-right-wrap h1 {
+            font-weight: 600;
+            color: #333;
+        }
+        .login-right-wrap .account-subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .form-control {
+            border-radius: 10px;
+            padding: 12px;
+            border: 1px solid #ccc;
+            transition: border 0.2s;
+        }
+        .form-control:focus {
+            border-color: #95C270;
+            box-shadow: 0 0 5px rgba(149, 194, 112, 0.5);
+        }
+        .btn-primary {
+            background-color: #95C270;
+            border-color: #95C270;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            transition: background 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #84b061;
+            border-color: #84b061;
+        }
+        .forgotpass a, .dont-have a {
+            color: #95C270;
+            font-weight: 500;
+        }
+        .login-or .or-line {
+            background-color: #ccc;
+        }
+        .login-or .span-or {
+            background: #fff;
+            color: #666;
+        }
+    </style>
     </head>
     <body>
 	
@@ -33,7 +101,7 @@
             	<div class="container">
                 	<div class="loginbox">
                     	<div class="login-left">
-							<img class="img-fluid" src="{% static 'HealthStack-System/images/Normal/footer_logo.png' %}" alt="Logo"> 
+							<img class="img-fluid" src="{% static 'HealthStack-System/images/Normal/lo.png' %}" alt="Logo"> 
                         </div>
                         <div class="login-right">
 							<div class="login-right-wrap">
