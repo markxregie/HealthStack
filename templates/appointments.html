@@ -1,7 +1,6 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-  <!-- doccure/appointments.html  30 Nov 2019 04:12:09 GMT -->
   <head>
     <meta charset="utf-8" />
     <meta
@@ -39,11 +38,50 @@
       href="{% static 'HealthStack-System/css/Normal/style.css' %}"
     />
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="assets/js/html5shiv.min.js"></script>
-      <script src="assets/js/respond.min.js"></script>
-    <![endif]-->
+    <style>
+      /* Breadcrumb green theme */
+      .breadcrumb-bar {
+        background-color: #95C270 !important;
+        padding: 10px 0;
+      }
+      .breadcrumb a {
+        color: #ffffff !important;
+      }
+      .breadcrumb .active {
+        color: #e8f5e9 !important;
+      }
+
+      /* Change info-light buttons to green */
+      .bg-info-light {
+        background-color: rgba(149, 194, 112, 0.15) !important;
+        color: #95C270 !important;
+      }
+      .bg-info-light:hover {
+        background-color: rgba(149, 194, 112, 0.3) !important;
+        color: #95C270 !important;
+      }
+
+      /* Focus highlights */
+      .form-control:focus,
+      .btn:focus {
+        border-color: #95C270 !important;
+        box-shadow: 0 0 0 0.25rem rgba(149, 194, 112, 0.4) !important;
+      }
+
+      /* Green selection highlight */
+      option:checked,
+      option:hover,
+      select:focus option:checked {
+        background-color: #95C270 !important;
+        color: white !important;
+      }
+
+      /* Override Firefox blue text selection */
+      ::selection {
+        background-color: #95C270 !important;
+        color: white !important;
+      }
+    </style>
   </head>
   <body>
     <!-- Main Wrapper -->
@@ -101,7 +139,7 @@
                       
                       <div class="patient-details">
                         <h5>
-                          <i class="fas fa-file"></i>Appoinment Serial No: #PT{{app.serial_number}}
+                          <i class="fas fa-file"></i> Appoinment Serial No: #PT{{app.serial_number}}
                         </h5>
                         <h5>
                           <i class="far fa-clock"></i> {{app.date}} {{app.time}}
@@ -110,7 +148,7 @@
                           <i class="fas fa-briefcase-medical"></i> Purpose: {{app.appointment_type}} 
                         </h5>
                         <h5>
-                          <i class="fas fa-map-marker-alt"></i>{{app.patient.address}}
+                          <i class="fas fa-map-marker-alt"></i> {{app.patient.address}}
                         </h5>
                         <h5>
                           <i class="fas fa-envelope"></i> {{app.patient.email}}
@@ -135,18 +173,13 @@
                     <a href="{% url 'accept-appointment' pk=app.id %}" onclick="return confirm('Accept appointment?');" class="btn btn-sm bg-success-light"><i class="fas fa-check"></i> Accept</a>
                     <a href="{% url 'reject-appointment' pk=app.id %}" onclick="return confirm('Reject Appointment?');" class="btn btn-sm bg-danger-light"><i class="fas fa-times"></i> Reject</a>
                   </div>
-                  
                 </div>
-                <!-- /Appointment List -->
                 {% endfor %}
-                
               </div>
-              
             </div>
             
           </div>
         </div>
-        
       </div>
       <!-- /Page Content -->
 
@@ -226,10 +259,6 @@
 
     <!-- Custom JS -->
     <script src="{% static 'HealthStack-System/js/Normal/script.js' %}"></script>
-
-    <!-- Custom JS -->
     <script src="{% static 'HealthStack-System/Outside_assets/js/script.js' %}"></script>
   </body>
-
-  <!-- doccure/appointments.html  30 Nov 2019 04:12:09 GMT -->
 </html>

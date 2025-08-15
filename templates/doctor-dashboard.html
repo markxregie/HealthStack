@@ -54,6 +54,16 @@
       <!-- /Header -->
 
       <!-- Breadcrumb -->
+      <style>
+        :root {
+          --accent-color: #95C270; /* green */
+        }
+
+        .breadcrumb-bar {
+          background-color: var(--accent-color) !important;
+        }
+      </style>
+
       <div class="breadcrumb-bar">
         <div class="container-fluid">
           <div class="row align-items-center">
@@ -71,7 +81,8 @@
                   </li>
                 </ol>
               </nav>
-              <h2 class="breadcrumb-title">Doctor Dashboard</h2>{% include 'message.html' %}
+              <h2 class="breadcrumb-title">Doctor Dashboard</h2>
+              {% include 'message.html' %}
             </div>
           </div>
         </div>

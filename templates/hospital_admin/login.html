@@ -1,54 +1,108 @@
-{% load static%}
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    
-<!-- Mirrored from dreamguys.co.in/demo/doccure/admin/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 30 Nov 2019 04:12:46 GMT -->
 <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
-        <title>HealthStack</title>
-		
-		<!-- Favicon -->
-        <link rel="shortcut icon" type="image/x-icon" href="{% static 'HealthStack-System/images/Normal/favicon.png' %}"> 
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0">
+    <title>HealthStack</title>
+    
+    <!-- Favicon -->
+    <link rel="shortcut icon" type="image/x-icon" href="{% static 'HealthStack-System/images/Normal/favicon.png' %}"> 
 
-		<!-- Bootstrap CSS -->
-        <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/bootstrap.min.css' %}">  
-		
-		<!-- Fontawesome CSS -->
-        <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/font-awesome.min.css' %}"> 
-		
-		<!-- Main CSS -->
-        <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css' %}"> 
-		
-		<!--[if lt IE 9]>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/bootstrap.min.css' %}">  
+    
+    <!-- Fontawesome CSS -->
+    <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/font-awesome.min.css' %}"> 
+    
+    <!-- Main CSS -->
+    <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css' %}"> 
+
+	<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
-    </head>
-    <body>
-	
-		<!-- Main Wrapper -->
-        <div class="main-wrapper login-body">
-            <div class="login-wrapper">
-            	<div class="container">
-                	<div class="loginbox">
-                    	<div class="login-left">
-							<img class="img-fluid" src="{% static 'HealthStack-System/images/Normal/footer_logo.png' %}" alt="Logo"> 
-                        </div>
-                        <div class="login-right">
-							<div class="login-right-wrap">
-								<h1>Login</h1>
-								<p class="account-subtitle">Access to our dashboard</p>
-								
-								<!-- Form -->
-								<form action="{% url 'admin-login'%}" method="POST">
-									{% csrf_token %}
 
-									{% include 'message.html' %}
+    <!-- Custom Theme Colors -->
+    <style>
+        :root {
+            --primary-color: #95C270; /* Green */
+            --hover-bg-color: #e6f0c8; /* Light green hover */
+        }
 
+        body {
+            background-color: #f4f6f9;
+        }
 
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            transition: background-color 0.3s ease;
+        }
 
-									{% comment %} {% if messages %}
+        .btn-primary:hover {
+            background-color: var(--hover-bg-color);
+            border-color: var(--hover-bg-color);
+            color: #333;
+        }
+
+        .login-right-wrap h1 {
+            color: var(--primary-color);
+        }
+
+        .account-subtitle {
+            color: #666;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(149, 194, 112, 0.5);
+        }
+
+        .forgotpass a,
+        .dont-have a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .forgotpass a:hover,
+        .dont-have a:hover {
+            color: #7aa256;
+            text-decoration: underline;
+        }
+
+        .login-or .or-line {
+            background-color: var(--primary-color);
+        }
+
+        .loginbox {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0px 4px 20px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper login-body">
+        <div class="login-wrapper">
+            <div class="container">
+                <div class="loginbox">
+                    <div class="login-left">
+                        <img class="img-fluid" src="{% static 'HealthStack-System/images/Normal/footer_logo.png' %}" alt="Logo"> 
+                    </div>
+                    <div class="login-right">
+                        <div class="login-right-wrap">
+                            <h1>Login</h1>
+                            <p class="account-subtitle">Access to our dashboard</p>
+                            
+                            <!-- Form -->
+                            <form action="{% url 'admin-login' %}" method="POST">
+                                {% csrf_token %}
+                                {% include 'message.html' %}
+
+									 {% comment %} {% if messages %}
                       
                           				{% for message in messages %}
                           					<div class="alert alert-danger alert-dismissible fade show" id="CredentialCheck" role="alert">
@@ -61,81 +115,76 @@
                       
                       				{% endif %} {% endcomment %}
 
-									<div class="form-group">
-										<input class="form-control" type="text" placeholder="Username" name="username">
-									</div>
+                                <div class="form-group">
+                                    <input class="form-control" type="text" placeholder="Username" name="username">
+                                </div>
 
-									<div class="form-group">
-										<input class="form-control" type="password" id="myInput" placeholder="Password" name= "password">
-										<input type="checkbox" class="mt-2" onclick="myFunction11()">Show Password
-									</div>
+                                <div class="form-group">
+                                    <input class="form-control" type="password" id="myInput" placeholder="Password" name="password">
+                                    <input type="checkbox" class="mt-2" onclick="myFunction11()"> Show Password
+                                </div>
 
-									<div class="form-group">
-										<button class="btn btn-primary btn-block" type="submit">Login</button>
-									</div>
-								</form>
-								<!-- /Form -->
-								
-								<div class="text-center forgotpass"><a href="forgot-password.html">Forgot Password?</a></div>
-								<div class="login-or">
-									<span class="or-line"></span>
-									<span class="span-or">or</span>
-								</div>
-								  
-								<div class="text-center dont-have">Return to <a href="{%url 'hospital_home' %}">Homepage</a></div>
-								
-								<div class="text-center dont-have">Don't have an account? <a href="{%url 'admin_register'%}">Register</a></div>
-							</div>
+                                <div class="form-group">
+                                    <button class="btn btn-primary btn-block" type="submit">Login</button>
+                                </div>
+                            </form>
+                            <!-- /Form -->
+                            
+                            <div class="text-center forgotpass"><a href="forgot-password.html">Forgot Password?</a></div>
+                            <div class="login-or">
+                                <span class="or-line"></span>
+                                <span class="span-or">or</span>
+                            </div>
+                              
+                            <div class="text-center dont-have">Return to <a href="{% url 'hospital_home' %}">Homepage</a></div>
+                            <div class="text-center dont-have">Don't have an account? <a href="{% url 'admin_register' %}">Register</a></div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-		<!-- /Main Wrapper -->
-		
-		<!-- jQuery -->
-        <script src="{% static 'HealthStack-System/js/admin/jquery-3.2.1.min.js' %}"></script> 
-		
-		<!-- Bootstrap Core JS -->
-        <script src="{% static 'HealthStack-System/js/admin/popper.min.js' %}"></script> 
-        <script src="{% static 'HealthStack-System/js/admin/bootstrap.min.js' %}"></script> 
-		
-		<!-- Custom JS -->
-		<script src="{% static 'HealthStack-System/js/admin/script.js' %}"></script>
+    </div>
 
-		<!-- alert js -->
-		<script>
-			var x = document.getElementById('CredentialCheck');
-			if (x.style.display === "none") {
-				x.style.display = "block";
-			}
-			$('#CredentialCheck').delay(4000).fadeOut('slow');     
-		</script>
+    <!-- jQuery -->
+    <script src="{% static 'HealthStack-System/js/admin/jquery-3.2.1.min.js' %}"></script> 
+    
+    <!-- Bootstrap Core JS -->
+    <script src="{% static 'HealthStack-System/js/admin/popper.min.js' %}"></script> 
+    <script src="{% static 'HealthStack-System/js/admin/bootstrap.min.js' %}"></script> 
+    
+    <!-- Custom JS -->
+    <script src="{% static 'HealthStack-System/js/admin/script.js' %}"></script>
 
-		<!-- show password js -->
-		<script>
-			function myFunction11() {
-			var x = document.getElementById('myInput');
-			if (x.type === "password") {
-				x.type = "text";
-			} else {
-				x.type = "password";
-			}
-			}
-			</script>
-		  
+    <!-- alert js -->
+    <script>
+        var x = document.getElementById('CredentialCheck');
+        if (x && x.style.display === "none") {
+            x.style.display = "block";
+        }
+        $('#CredentialCheck').delay(4000).fadeOut('slow');     
+    </script>
 
-		{% if messages %}
-		<script>
-			{% for message in messages %}
-				$(document).ready(function () {
-					$('.toast').toast('show');
-				});
-			{% endfor %}
-		</script>
-	  {% endif %}
-		
-    </body>
+    <!-- show password js -->
+    <script>
+        function myFunction11() {
+            var x = document.getElementById('myInput');
+            if (x.type === "password") {
+                x.type = "text";
+            } else {
+                x.type = "password";
+            }
+        }
+    </script>
+      
+    {% if messages %}
+    <script>
+        {% for message in messages %}
+            $(document).ready(function () {
+                $('.toast').toast('show');
+            });
+        {% endfor %}
+    </script>
+    {% endif %}
 
-<!-- Mirrored from dreamguys.co.in/demo/doccure/admin/login.html by HTTrack Website Copier/3.x [XR&CO'2014], Sat, 30 Nov 2019 04:12:46 GMT -->
+</body>
 </html>
