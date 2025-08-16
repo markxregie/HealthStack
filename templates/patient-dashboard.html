@@ -418,10 +418,8 @@
                                 </td>
                                 <td>
                                   <div class="table-action">
-                                    <a
-                                      href="{% url 'ssl-payment-request' pk=appointment.patient.patient_id id=appointment.id %}"
-                                      class="btn bg-success-light btn-sm"
-                                    >
+                                    <a href="{% url 'create-paymongo-appointment-payment' appointment.id %}"
+                                      class="btn bg-success-light btn-sm">
                                       <i class="fas fa-dollar-sign"></i> Pay Now
                                     </a>
                                   </div>

@@ -1,25 +1,29 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
+  <!-- doccure/search.html  30 Nov 2019 04:12:16 GMT -->
   <head>
     <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, user-scalable=0"
     />
-    <title>HealthStack - Hospital Doctor Register</title>
+    <title>HealthStack</title>
 
+    <!-- Favicons -->
     <link
       type="image/x-icon"
       href="{% static 'HealthStack-System/images/Normal/favicon.png' %}"
       rel="icon"
     />
 
+    <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/css/Normal/bootstrap.min.css' %}"
     />
 
+    <!-- Fontawesome CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/plugins/Normal/fontawesome/css/fontawesome.min.css' %}"
@@ -29,21 +33,25 @@
       href="{% static 'HealthStack-System/plugins/Normal/fontawesome/css/all.min.css' %}"
     />
 
+    <!-- Datetimepicker CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/css/Normalbootstrap-datetimepicker.min.css' %}"
     />
 
+    <!-- Select2 CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/plugins/Normal/select2/css/select2.min.css'%}"
     />
 
+    <!-- Fancybox CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/plugins/Normal/fancybox/jquery.fancybox.min.css'%}"
     />
 
+    <!-- Main CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/css/Normal/style.css' %}"
@@ -51,177 +59,108 @@
 
     <link rel="stylesheet"href="{% static 'HealthStack-System/css/Normal/search2.css' %}">
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
-
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="assets/js/html5shiv.min.js"></script>
+      <script src="assets/js/respond.min.js"></script>
+    <![endif]-->
     <style>
-      :root {
-          --accent-color: #95C270;
-          --accent-hover: #82ab61;
-          --accent-light: #f4f8f0;
-          --text-dark: #333;
-          --text-light: #6c757d;
-          --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
-          --card-border-radius: 12px;
-          --body-bg: #f8f9fa;
-      }
-       /* --- Breadcrumb & Titles --- */
-            .breadcrumb-bar {
-                background-color: var(--accent-color);
-                padding: 1.25rem 0;
-            }
-            .breadcrumb-title {
-                font-weight: 600;
-                color: var(--text-dark);
-            }
-            .breadcrumb-item a {
-                color: var(--accent-color);
-                transition: color 0.3s ease;
-            }
-            .breadcrumb-item a:hover {
-                color: var(--accent-hover);
-            }
-      body {
-          font-family: 'Poppins', sans-serif;
-          background-color: var(--body-bg);
-      }
-      /* --- Cards & Layout --- */
-      .card {
-          border: none;
-          border-radius: var(--card-border-radius);
-          box-shadow: var(--card-shadow);
-          margin-bottom: 2rem;
-      }
-      .card-title {
-          font-weight: 600;
-          color: var(--text-dark);
-          margin-bottom: 0.5rem;
-      }
-      .card hr {
-          margin-top: 0.5rem;
-          margin-bottom: 2rem;
-          border-color: #f0f0f0;
-      }
-      .form-group > label.col-form-label {
-        font-size: 1.1rem;
-        font-weight: 600;
-        margin-bottom: 1rem;
-      }
 
-      /* --- Custom Radio Tile Buttons --- */
-      .radio-tile-group {
+    .drop-zone {
+      max-width: auto;
+      height: 200px;
+      padding: 25px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      font-family: "Quicksand", sans-serif;
+      font-weight: 500;
+      font-size: 20px;
+      cursor: pointer;
+      color: #cccccc;
+      border: 4px dashed #8b8b8b;
+      border-radius: 10px;
+    }
+
+    .drop-zone--over {
+      border-style: solid;
+    }
+
+    .drop-zone__input {
+      display: none;
+    }
+
+    .drop-zone__thumb {
+      width: 100%;
+      height: 100%;
+      border-radius: 10px;
+      overflow: hidden;
+      background-color: #cccccc;
+      background-size: cover;
+      position: relative;
+    }
+
+    .drop-zone__thumb::after {
+      content: attr(data-label);
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      padding: 5px 0;
+      color: #ffffff;
+      background: rgba(0, 0, 0, 0.75);
+      font-size: 14px;
+      text-align: center;
+    }
+
+    .center{
         display: flex;
-        flex-wrap: wrap;
-        gap: 1rem;
-      }
-      .radio-tile-group .input-container {
-        position: relative;
-        height: auto;
-        width: 100%;
-      }
-      .radio-tile-group .input-container .radio-button {
-        opacity: 0;
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        margin: 0;
-        cursor: pointer;
-      }
-      .radio-tile-group .input-container .radio-tile {
-        display: flex;
-        align-items: center;
         justify-content: center;
-        padding: 1rem;
-        border: 2px solid #e0e0e0;
-        border-radius: 8px;
-        transition: all 0.3s ease;
-        text-align: center;
-      }
-      .radio-tile-group .input-container .icon {
-        color: var(--accent-color);
-        margin-right: 0.5rem;
-        font-size: 1.2rem;
-      }
-      .radio-tile-group .input-container .radio-button:checked + .radio-tile {
-        background-color: var(--accent-light);
-        border-color: var(--accent-color);
-        box-shadow: 0 0 10px rgba(149, 194, 112, 0.2);
-        color: var(--accent-color);
-        font-weight: 600;
-      }
-
-      /* --- Drop Zone --- */
-      .drop-zone {
-        height: 200px;
-        padding: 25px;
-        display: flex;
         align-items: center;
-        justify-content: center;
-        text-align: center;
-        font-family: 'Poppins', sans-serif;
-        font-weight: 500;
-        font-size: 1.1rem;
-        cursor: pointer;
-        color: var(--text-light);
-        border: 3px dashed #d1d1d1;
-        border-radius: var(--card-border-radius);
-        transition: all 0.3s ease;
-      }
-      .drop-zone--over {
-        border-style: solid;
-        border-color: var(--accent-color);
-        background-color: var(--accent-light);
-      }
-      .drop-zone__input { display: none; }
-      .drop-zone__thumb {
-        width: 100%; height: 100%; border-radius: var(--card-border-radius);
-        overflow: hidden; background-color: #cccccc; background-size: cover;
-        position: relative;
-      }
-      .drop-zone__thumb::after {
-        content: attr(data-label); position: absolute; bottom: 0; left: 0;
-        width: 100%; padding: 5px 0; color: #ffffff;
-        background: rgba(0, 0, 0, 0.75); font-size: 14px; text-align: center;
-      }
+    }
 
-      /* --- Submit Button --- */
-      .submit-btn {
-        background-color: var(--accent-color);
-        border-color: var(--accent-color);
-        color: #fff;
-        padding: 12px 30px;
-        font-size: 16px;
-        font-weight: 600;
-        border-radius: 50px;
-        transition: all 0.3s ease;
-        min-width: 250px;
-        letter-spacing: 0.5px;
-        box-shadow: 0 4px 10px rgba(149, 194, 112, 0.4);
-      }
-      .submit-btn:hover {
-        background-color: var(--accent-hover);
-        border-color: var(--accent-hover);
-        transform: translateY(-2px);
-        box-shadow: 0 6px 15px rgba(149, 194, 112, 0.5);
-        color: #fff;
-      }
+
+
     </style>
   </head>
   <body>
+    <!-- Main Wrapper -->
     <div class="main-wrapper">
+      <!-- Header -->
       <header class="header">
-          {% if user.is_authenticated and user.is_patient %}
-        {% include 'patient_navbar.html' %}
-          {% endif %}
-        
-          {% if user.is_authenticated and user.is_doctor %}
-        {% include 'doctor-navbar.html' %}
-        {% endif %}
+            {% if user.is_authenticated and user.is_patient %}
+		    {% include 'patient_navbar.html' %}
+	        {% endif %}
+				
+		    {% if user.is_authenticated and user.is_doctor %}
+			{% include 'doctor-navbar.html' %}
+			{% endif %}
       </header>
+      <!-- /Header -->
+
+      <!-- Breadcrumb -->
       <div class="breadcrumb-bar">
+				<div class="container-fluid">
+					<div class="row align-items-center">
+						<div class="col-md-6 col-6">
+							<nav aria-label="breadcrumb" class="page-breadcrumb">
+								<ol class="breadcrumb">
+									<li class="breadcrumb-item"><a href="index-2.html">Home</a></li>
+									<li class="breadcrumb-item active" aria-current="page">Hospital Doctor Register</li>
+								</ol>
+							</nav>
+							<h2 class="breadcrumb-title">Hospital Doctor Register</h2>
+						</div>
+						
+					</div>
+				</div>
+			</div>
+      <!-- /Breadcrumb -->
+
+      <!-- Page Content -->
+      <div class="content">
         <div class="container-fluid">
-<<<<<<< HEAD
           <div class="row">
             <!-- Profile Sidebar -->
             <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
@@ -247,20 +186,8 @@
                 {# Ang isang linyang ito na ang gagawa ng lahat ng form fields (dropdowns, file upload) at magpapakita ng errors #}
                 {{ form.as_p }}
 
-=======
-          <div class="row align-items-center">
-            <div class="col-md-12 col-12">
-              <nav aria-label="breadcrumb" class="page-breadcrumb">
-                <ol class="breadcrumb">
-                  <li class="breadcrumb-item"><a href="{% url 'doctor-dashboard' %}">Home</a></li>
-                  <li class="breadcrumb-item active" aria-current="page">Hospital Doctor Register</li>
-                </ol>
-              </nav>
-              <h2 class="breadcrumb-title">Hospital Doctor Registration</h2>
->>>>>>> 4dcf923b3e7d67274472213b4ddd46b3e4550358
             </div>
         </div>
-<<<<<<< HEAD
 
         <div class="submit-section submit-btn-bottom center">
             <button type="submit" class="btn btn-info submit-btn" style="min-width: 205px;">Submit Registration</button>
@@ -269,95 +196,35 @@
     
 </div>
       <!-- /Page Content -->
-=======
-      </div>
-      <div class="content">
-        <div class="container-fluid">
-          <div class="row">
-            <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar">
-              <div>
-                {% include 'doctor-sidebar.html' %}
-              </div>
-            </div>
-            <div class="col-md-12 col-lg-8 col-xl-9">
-              <form action="{% url 'hospital-doctor-register' pk=hospitals.hospital_id %}" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title text-center">Join {{hospitals.name}}</h2>
-                        <hr>
-                        <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-form-label d-block">Choose Department</label>
-                                    <div class="radio-tile-group">
-                                        {% for department in departments %}
-                                        <div class="input-container">
-                                          <input id="dep-{{department.hospital_department_id}}" class="radio-button" type="radio" value="{{ department.hospital_department_id }}" name="department_radio" />
-                                          <label class="radio-tile" for="dep-{{department.hospital_department_id}}">
-                                              <i class="fas fa-building icon"></i> {{ department.hospital_department_name }}
-                                          </label>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label class="col-form-label d-block">Choose Specialization</label>
-                                    <div class="radio-tile-group">
-                                        {% for specialization in specializations %}
-                                        <div class="input-container">
-                                          <input id="spec-{{specialization.specialization_id}}" class="radio-button" type="radio" value="{{ specialization.specialization_id }}" name="specialization_radio" />
-                                          <label class="radio-tile" for="spec-{{specialization.specialization_id}}">
-                                              <i class="fas fa-star-of-life icon"></i> {{ specialization.specialization_name }}
-                                          </label>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
->>>>>>> 4dcf923b3e7d67274472213b4ddd46b3e4550358
 
-                        <div class="form-group mt-4">
-                            <label class="col-form-label d-block text-center">Upload Your Certificate</label>
-                            <div class="drop-zone">
-                                <span class="drop-zone__prompt">
-                                    <i class="fas fa-cloud-upload-alt fa-2x d-block mb-2"></i>
-                                    Drop file here or click to upload
-                                </span>
-                                <input type="file" name="certificate_image" class="drop-zone__input">
-                            </div>
-                        </div>
+     <!-- Footer -->
+     {% include 'footer.html' %}
+     <!-- /Footer -->
+    </div>
+    <!-- /Main Wrapper -->
 
-                    </div>
-                </div>
-                <div class="submit-section text-center">
-                    <button type="submit" class="btn submit-btn">Submit Application</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      </div>
-      {% include 'footer.html' %}
-      </div>
+    <!-- jQuery -->
     <script src="{% static 'HealthStack-System/js/Normal/jquery.min.js' %}"></script>
 
+    <!-- Bootstrap Core JS -->
     <script src="{% static 'HealthStack-System/js/Normal/popper.min.js' %}"></script>
     <script src="{% static 'HealthStack-System/js/Normal/bootstrap.min.js' %}"></script>
 
+    <!-- Sticky Sidebar JS -->
     <script src="{% static 'HealthStack-System/plugins/Normal/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
     <script src="{% static 'HealthStack-System/plugins/Normal/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script>
 
+    <!-- Select2 JS -->
     <script src="{% static 'HealthStack-System/plugins/Normal/select2/js/select2.min.js'%}"></script>
 
+    <!-- Datetimepicker JS -->
     <script src="{% static 'HealthStack-System/js/Normal/moment.min.js'%}"></script>
     <script src="{% static 'HealthStack-System/js/Normal/bootstrap-datetimepicker.min.js'%}"></script>
 
+    <!-- Fancybox JS -->
     <script src="{% static 'HealthStack-System/plugins/Normal/fancybox/jquery.fancybox.min.js'%}"></script>
 
+    <!-- Custom JS -->
     <script src="{% static 'HealthStack-System/Outside_assets/js/script.js' %}"></script>
 
     <script>
@@ -437,4 +304,5 @@
 
     </body>
 
-      </html>
+      <!-- doccure/search.html  30 Nov 2019 04:12:16 GMT -->
+    </html>

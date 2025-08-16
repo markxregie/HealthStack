@@ -253,64 +253,86 @@ def hospital_admin_profile(request, pk):
     context = {'admin': admin, 'form': form}
     return render(request, 'hospital_admin/hospital-admin-profile.html', context)
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .models import Hospital_Information, hospital_department, specialization, service, Admin_Information
+
 @csrf_exempt
 @login_required(login_url='admin_login')
 def add_hospital(request):
-    if  request.user.is_hospital_admin:
+    if request.user.is_hospital_admin:
         user = Admin_Information.objects.get(user=request.user)
 
         if request.method == 'POST':
-            hospital = Hospital_Information()
-            
-            if 'featured_image' in request.FILES:
-                featured_image = request.FILES['featured_image']
-            else:
-                featured_image = "departments/default.png"
-            
+            # Handle image upload
+            featured_image = request.FILES.get('featured_image', "departments/default.png")
+
+            # Get form data
             hospital_name = request.POST.get('hospital_name')
             address = request.POST.get('address')
             description = request.POST.get('description')
             email = request.POST.get('email')
-            phone_number = request.POST.get('phone_number') 
+            phone_number = request.POST.get('phone_number')
             hospital_type = request.POST.get('type')
             specialization_name = request.POST.getlist('specialization')
             department_name = request.POST.getlist('department')
             service_name = request.POST.getlist('service')
-            
-        
-            hospital.name = hospital_name
-            hospital.description = description
-            hospital.address = address
-            hospital.email = email
-            hospital.phone_number =phone_number
-            hospital.featured_image=featured_image 
-            hospital.hospital_type=hospital_type
-            
-            # print(department_name[0])
-         
-            hospital.save()
-            
-            for i in range(len(department_name)):
-                departments = hospital_department(hospital=hospital)
-                # print(department_name[i])
-                departments.hospital_department_name = department_name[i]
-                departments.save()
-                
-            for i in range(len(specialization_name)):
-                specializations = specialization(hospital=hospital)
-                specializations.specialization_name=specialization_name[i]
-                specializations.save()
-                
-            for i in range(len(service_name)):
-                services = service(hospital=hospital)
-                services.service_name = service_name[i]
-                services.save()
-            
-            messages.success(request, 'Hospital Added')
-            return redirect('hospital-list')
 
-        context = { 'admin': user}
-        return render(request, 'hospital_admin/add-hospital.html',context)
+            # Validation: Required fields
+            if not hospital_name or not address or not email or not phone_number:
+                messages.error(request, "Please fill in all required fields.")
+                return redirect('add-hospital')
+
+            # Validate phone number
+            try:
+                phone_number = int(phone_number)
+            except ValueError:
+                messages.error(request, "Phone number must be a valid number.")
+                return redirect('add-hospital')
+
+            try:
+                # Create hospital
+                hospital = Hospital_Information(
+                    name=hospital_name,
+                    description=description,
+                    address=address,
+                    email=email,
+                    phone_number=phone_number,
+                    featured_image=featured_image,
+                    hospital_type=hospital_type
+                )
+                hospital.save()
+
+                # Save departments
+                for dept_name in department_name:
+                    if dept_name.strip():  # skip empty
+                        dept = hospital_department(hospital=hospital, hospital_department_name=dept_name)
+                        dept.save()
+
+                # Save specializations
+                for spec_name in specialization_name:
+                    if spec_name.strip():
+                        spec = specialization(hospital=hospital, specialization_name=spec_name)
+                        spec.save()
+
+                # Save services
+                for serv_name in service_name:
+                    if serv_name.strip():
+                        serv = service(hospital=hospital, service_name=serv_name)
+                        serv.save()
+
+                messages.success(request, 'Hospital Added Successfully!')
+                return redirect('hospital-list')
+
+            except Exception as e:
+                messages.error(request, f"An error occurred while saving the hospital: {e}")
+                return redirect('add-hospital')
+
+        context = {'admin': user}
+        return render(request, 'hospital_admin/add-hospital.html', context)
+
 
 
 # def edit_hospital(request, pk):
@@ -621,43 +643,70 @@ def generate_random_medicine_ID():
 @csrf_exempt
 @login_required(login_url='admin_login')
 def add_medicine(request):
+    user = None
     if request.user.is_pharmacist:
-     user = Pharmacist.objects.get(user=request.user)
-     
+        user = Pharmacist.objects.get(user=request.user)
+
     if request.method == 'POST':
-       medicine = Medicine()
-       
-       if 'featured_image' in request.FILES:
-           featured_image = request.FILES['featured_image']
-       else:
-           featured_image = "medicines/default.png"
-       
-       name = request.POST.get('name')
-       Prescription_reqiuired = request.POST.get('requirement_type')     
-       weight = request.POST.get('weight') 
-       quantity = request.POST.get('quantity')
-       medicine_category = request.POST.get('category_type')
-       medicine_type = request.POST.get('medicine_type')
-       description = request.POST.get('description')
-       price = request.POST.get('price')
-       
-       medicine.name = name
-       medicine.Prescription_reqiuired = Prescription_reqiuired
-       medicine.weight = weight
-       medicine.quantity = quantity
-       medicine.medicine_category = medicine_category
-       medicine.medicine_type = medicine_type
-       medicine.description = description
-       medicine.price = price
-       medicine.featured_image = featured_image
-       medicine.stock_quantity = 80
-       #medicine.medicine_id = generate_random_medicine_ID()
-       
-       medicine.save()
-       
-       return redirect('medicine-list')
-   
-    return render(request, 'hospital_admin/add-medicine.html',{'admin': user})
+        name = request.POST.get('name', '').strip()
+        weight = request.POST.get('weight', '').strip()
+        quantity = request.POST.get('quantity', '').strip()
+        price = request.POST.get('price', '').strip()
+        requirement_type = request.POST.get('requirement_type')
+        category_type = request.POST.get('category_type')
+        medicine_type = request.POST.get('medicine_type')
+        description = request.POST.get('description', '').strip()
+        featured_image = request.FILES.get('featured_image', 'medicines/default.png')
+
+        has_error = False
+
+        # Validation
+        if not name:
+            messages.error(request, 'Medicine name is required.')
+            has_error = True
+
+        if not weight:
+            messages.error(request, 'Weight is required.')
+            has_error = True
+        elif not weight.replace('.', '', 1).isdigit():
+            messages.error(request, 'Weight must be a number.')
+            has_error = True
+
+        if not quantity:
+            messages.error(request, 'Quantity is required.')
+            has_error = True
+        elif not quantity.isdigit():
+            messages.error(request, 'Quantity must be a whole number.')
+            has_error = True
+
+        if not price:
+            messages.error(request, 'Price is required.')
+            has_error = True
+        elif not price.replace('.', '', 1).isdigit():
+            messages.error(request, 'Price must be a number.')
+            has_error = True
+
+        if has_error:
+            return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
+
+        # Save if no errors
+        medicine = Medicine(
+            name=name,
+            weight=weight,
+            quantity=int(quantity),
+            price=float(price),
+            Prescription_reqiuired=requirement_type,
+            medicine_category=category_type,
+            medicine_type=medicine_type,
+            description=description,
+            featured_image=featured_image,
+            stock_quantity=80
+        )
+        medicine.save()
+        messages.success(request, 'Medicine added successfully!')
+        return redirect('medicine-list')
+
+    return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
 
 @csrf_exempt
 @login_required(login_url='admin_login')
