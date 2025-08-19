@@ -146,6 +146,7 @@
       overflow: hidden;
     }
     .product-image {
+      margin-top: 5px;
       width: 100%;
       height: 200px;
       object-fit: contain;
@@ -260,51 +261,86 @@
   <main class="main-content">
       <section class="py-5">
         <div class="container">
-          <ul class="nav nav-pills justify-content-center mb-5" id="medicineTabs" role="tablist">
+          <ul class="nav nav-pills justify-content-center mb-5 flex-wrap gap-2" id="medicineTabs" role="tablist">
             <li class="nav-item" role="presentation">
-              <button class="nav-link active rounded-pill px-4" id="all-meds-tab" data-bs-toggle="pill" data-bs-target="#all-meds" type="button" role="tab" aria-selected="true">All Medicine</button>
+              <button class="nav-link active rounded-pill px-3" data-category="all" type="button" role="tab" aria-selected="true">All Medicine</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link rounded-pill px-4" id="vitamins-tab" data-bs-toggle="pill" data-bs-target="#" type="button" role="tab" aria-selected="false">Vitamins</button>
+              <button class="nav-link rounded-pill px-3" data-category="fever" type="button" role="tab">Fever</button>
             </li>
             <li class="nav-item" role="presentation">
-              <button class="nav-link rounded-pill px-4" id="pain-relief-tab" data-bs-toggle="pill" data-bs-target="#" type="button" role="tab" aria-selected="false">Pain Relief</button>
+              <button class="nav-link rounded-pill px-3" data-category="pain" type="button" role="tab">Pain</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link rounded-pill px-4" id="cold-flu-tab" data-bs-toggle="pill" data-bs-target="#" type="button" role="tab" aria-selected="false">Cold & Flu</button>
+              <button class="nav-link rounded-pill px-3" data-category="cough" type="button" role="tab">Cough</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="cold" type="button" role="tab">Cold</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="flu" type="button" role="tab">Flu</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="allergy" type="button" role="tab">Allergy</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="infection" type="button" role="tab">Infection</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="stomach" type="button" role="tab">Stomach</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="hypertension" type="button" role="tab">Heart</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="diabetes" type="button" role="tab">Diabetes</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="skin" type="button" role="tab">Skin</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="vitamins" type="button" role="tab">Vitamins</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="eye" type="button" role="tab">Eye/Ear/Nose</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="respiratory" type="button" role="tab">Respiratory</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="urinary" type="button" role="tab">Urinary</button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link rounded-pill px-3" data-category="firstaid" type="button" role="tab">First Aid</button>
             </li>
           </ul>
 
-          <div class="tab-content" id="medicineTabsContent">
-            <div class="tab-pane fade show active" id="all-meds" role="tabpanel">
-              <div class="products-grid">
-                {% for medicine in medicines %}
-                <div class="product-card">
-                  <a href="{% url 'product-single' pk=medicine.serial_number %}" class="product-image-wrapper">
-                    <img src="{{ medicine.featured_image.url }}" alt="{{ medicine.name }}" class="product-image" loading="lazy" />
-                  </a>
-                  <div class="product-info">
-                    <div>
-                      <h3 class="product-title">
-                        <a href="{% url 'product-single' pk=medicine.serial_number %}">{{ medicine.name }}</a>
-                      </h3>
-                    </div>
-                    <div>
-                      <p class="product-price">{{ medicine.price }} Pesos</p>
-                      <a href="{% url 'add-to-cart' pk=medicine.serial_number %}" class="btn btn-add-to-cart" aria-label="Add {{ medicine.name }} to cart">
-                        Add to Cart
-                      </a>
-                    </div>
+          <div class="products-grid" id="productsContainer">
+            {% for medicine in medicines %}
+              <div class="product-card" data-category="{{ medicine.normalized_category }}">
+                <a href="{% url 'product-single' pk=medicine.serial_number %}" class="product-image-wrapper">
+                  <img src="{{ medicine.featured_image.url }}" alt="{{ medicine.name }}" class="product-image" loading="lazy" />
+                </a>
+                <div class="product-info">
+                  <div>
+                    <h3 class="product-title">
+                      <a href="{% url 'product-single' pk=medicine.serial_number %}">{{ medicine.name }}</a>
+                    </h3>
+                  </div>
+                  <div>
+                    <p class="product-price">{{ medicine.price }} Pesos</p>
+                    <a href="{% url 'add-to-cart' pk=medicine.serial_number %}" class="btn btn-add-to-cart" aria-label="Add {{ medicine.name }} to cart">
+                      Add to Cart
+                    </a>
                   </div>
                 </div>
-                {% empty %}
-                <div class="col-12 text-center py-5" style="grid-column: 1 / -1;">
-                  <h4>No medicines found.</h4>
-                  <p class="text-light">Please check back later or try a different search.</p>
-                </div>
-                {% endfor %}
               </div>
-            </div>
+            {% empty %}
+              <div class="col-12 text-center py-5" style="grid-column: 1 / -1;">
+                <h4>No medicines found.</h4>
+                <p class="text-light">Please check back later or try a different search.</p>
+              </div>
+            {% endfor %}
           </div>
         </div>
       </section>
@@ -330,8 +366,8 @@
         <div class="col-lg-3 col-md-6 mb-4 mb-lg-0">
           <h5>Contact Us</h5>
           <ul class="list-unstyled">
-            <li class="d-flex"><strong class="me-2">A:</strong><span>Dhanmondi, Dhaka, Bangladesh</span></li>
-            <li class="d-flex"><strong class="me-2">P:</strong><a href="tel://+23923929210">+2 392 3929 210</a></li>
+            <li class="d-flex"><strong class="me-2">A:</strong><span>Philippines</span></li>
+            <li class="d-flex"><strong class="me-2">P:</strong><a href="tel://+23923929210">+63 9123 12345</a></li>
             <li class="d-flex"><strong class="me-2">E:</strong><a href="mailto:info@healthstack.com">info@healthstack.com</a></li>
           </ul>
         </div>
@@ -340,6 +376,79 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      // Category filtering functionality
+      const tabButtons = document.querySelectorAll('#medicineTabs .nav-link');
+      const productCards = document.querySelectorAll('.product-card');
+      const productsContainer = document.getElementById('productsContainer');
+      
+      // Create no products message element
+      const noProductsMessage = document.createElement('div');
+      noProductsMessage.id = 'noProductsMessage';
+      noProductsMessage.className = 'col-12 text-center py-5';
+      noProductsMessage.style.display = 'none';
+      noProductsMessage.style.gridColumn = '1 / -1';
+      noProductsMessage.innerHTML = `
+        <div style="max-width: 400px; margin: 0 auto;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="#95C270" class="bi bi-inbox mb-3" viewBox="0 0 16 16">
+            <path d="M4.98 4a.5.5 0 0 0-.39.188L1.54 8H6a.5.5 0 0 1 .5.5 1.5 1.5 0 1 0 3 0A.5.5 0 0 1 10 8h4.46l-3.05-3.812A.5.5 0 0 0 11.02 4H4.98zm9.954 5H10.45a2.5 2.5 0 0 1-4.9 0H1.066l.32 2.562a.5.5 0 0 0 .497.438h12.234a.5.5 0 0 0 .496-.438L14.933 9z"/>
+          </svg>
+          <h4 class="text-muted">No products found in this category</h4>
+          <p class="text-light">This category doesn't have any items yet. Please check back later or browse other categories.</p>
+        </div>
+      `;
+      productsContainer.appendChild(noProductsMessage);
+      
+      tabButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const selectedCategory = this.getAttribute('data-category');
+          
+          // Update active tab styling
+          tabButtons.forEach(btn => btn.classList.remove('active'));
+          this.classList.add('active');
+          
+          // Filter products
+          let visibleCount = 0;
+          productCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category').toLowerCase();
+            
+            if (selectedCategory === 'all' || cardCategory.includes(selectedCategory)) {
+              card.style.display = 'block';
+              card.style.animation = 'fadeIn 0.3s ease-in';
+              visibleCount++;
+            } else {
+              card.style.display = 'none';
+            }
+          });
+          
+          // Show/hide no products message
+          if (visibleCount === 0) {
+            noProductsMessage.style.display = 'block';
+          } else {
+            noProductsMessage.style.display = 'none';
+          }
+        });
+      });
+
+      // Add CSS animation for smooth transitions
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(10px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    });
+  </script>
 
   {% if messages %}
   <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 11">

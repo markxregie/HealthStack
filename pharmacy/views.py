@@ -34,6 +34,8 @@ def pharmacy_single_product(request, pk):
         return render(request, 'patient-login.html')
 
 
+# ...existing imports...
+
 @csrf_exempt
 @login_required(login_url="login")
 def pharmacy_shop(request):
@@ -42,6 +44,41 @@ def pharmacy_shop(request):
         medicines, search_query = searchMedicines(request)
         orders = Order.objects.filter(user=request.user, ordered=False)
         carts = Cart.objects.filter(user=request.user, purchased=False)
+
+        # Normalize category for JS filtering
+        for med in medicines:
+            raw_cat = med.medicine_category or ""
+            normalized = (
+                raw_cat.lower()
+                .replace(" ", "")
+                .replace("/", "")
+                .replace("&", "")
+                .replace("(", "")
+                .replace(")", "")
+                .replace("-", "")
+                .replace(".", "")
+            )
+            # Map some common categories to tab values
+            mapping = {
+                "fever": "fever",
+                "pain": "pain",
+                "cough": "cough",
+                "cold": "cold",
+                "flu": "flu",
+                "allergy": "allergy",
+                "infection": "infection",
+                "stomach": "stomach",
+                "hypertension": "hypertension",
+                "heart": "hypertension",
+                "diabetes": "diabetes",
+                "skin": "skin",
+                "vitamins": "vitamins",
+                "eyeearnose": "eye",
+                "respiratoryasthmabronchitis": "respiratory",
+                "urinary": "urinary",
+                "firstaid": "firstaid",
+            }
+            med.normalized_category = mapping.get(normalized, normalized)
 
         context = {
             'patient': patient,
@@ -58,6 +95,7 @@ def pharmacy_shop(request):
         logout(request)
         messages.error(request, 'Not Authorized')
         return render(request, 'patient-login.html')
+
 
 
 @csrf_exempt
