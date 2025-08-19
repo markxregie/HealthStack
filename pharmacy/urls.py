@@ -12,7 +12,7 @@ from django.contrib import admin
 
 urlpatterns = [
     path('product-single/<int:pk>/', views.pharmacy_single_product, name='product-single'),
-    path('shop/', views.pharmacy_shop, name='pharmacy-shop'),
+    path('pharmacy/shop/', views.pharmacy_shop, name='pharmacy-shop'),
     path('cart/', views.cart_view, name='pharmacy-cart'),
     path('remove-item/<int:pk>/', views.remove_from_cart, name='remove-item'),
    
