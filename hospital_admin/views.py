@@ -609,27 +609,28 @@ def medicine_list(request):
     if request.user.is_authenticated:
         if request.user.is_pharmacist:
             pharmacist = Pharmacist.objects.get(user=request.user)
-            medicine = Medicine.objects.all()
+            
+            # Get search query
+            medicine_list, search_query = searchMedicines(request)
+            
+            # Pagination
+            from django.core.paginator import Paginator
+            paginator = Paginator(medicine_list, 7)  # Show 7 medicines per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            
             orders = Order.objects.filter(user=request.user, ordered=False)
             carts = Cart.objects.filter(user=request.user, purchased=False)
             
-            medicine, search_query = searchMedicines(request)
-            
-            if carts.exists() and orders.exists():
-                order = orders[0]
-                context = {'medicine':medicine,
-                        'pharmacist':pharmacist,
-                        'search_query': search_query,
-                        'order': order,
-                        'carts': carts,}
-                return render(request, 'hospital_admin/medicine-list.html',context)
-            else:
-                context = {'medicine':medicine,
-                            'pharmacist':pharmacist,
-                            'search_query': search_query,
-                            'orders': orders,
-                            'carts': carts,}
-                return render(request, 'hospital_admin/medicine-list.html',context)
+            context = {
+                'medicine': page_obj,  # Use paginated object
+                'pharmacist': pharmacist,
+                'search_query': search_query,
+                'orders': orders,
+                'carts': carts,
+                'page_obj': page_obj,  # Add page_obj for pagination controls
+            }
+            return render(request, 'hospital_admin/medicine-list.html', context)
                 
 
 @login_required(login_url='admin_login')
@@ -1092,9 +1093,14 @@ def pharmacist_dashboard(request):
             total_order_count = Order.objects.annotate(count=Count('orderitems'))
             total_cart_count = Cart.objects.annotate(count=Count('item'))
 
-            medicine = Medicine.objects.all()
+            # Pagination for medicine list
+            from django.core.paginator import Paginator
+            medicine_list = Medicine.objects.all()
+            paginator = Paginator(medicine_list, 7)  # Show 7 medicines per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
             
-            context = {'pharmacist':pharmacist, 'medicine':medicine,
+            context = {'pharmacist':pharmacist, 'medicine':page_obj,
                        'total_pharmacist_count':total_pharmacist_count, 
                        'total_medicine_count':total_medicine_count, 
                        'total_order_count':total_order_count,
