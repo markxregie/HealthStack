@@ -33,6 +33,7 @@ from django.utils.encoding import force_bytes
 from django.template.loader import render_to_string
 from django.utils.html import strip_tags
 from django.views.decorators.csrf import csrf_exempt
+from .forms import DoctorRegistrationForm
 
 
 # Create your views here.
@@ -448,45 +449,40 @@ def hospital_doctor_list(request, pk):
 @csrf_exempt
 @login_required(login_url="login")
 def hospital_doctor_register(request, pk):
-    if request.user.is_authenticated: 
-        
-        if request.user.is_doctor:
-            doctor = Doctor_Information.objects.get(user=request.user)
-            hospitals = Hospital_Information.objects.get(hospital_id=pk)
-            
-            departments = hospital_department.objects.filter(hospital=hospitals)
-            specializations = specialization.objects.filter(hospital=hospitals)
-            
-            if request.method == 'POST':
-                if 'certificate_image' in request.FILES:
-                    certificate_image = request.FILES['certificate_image']
-                else:
-                    certificate_image = "doctors_certificate/default.png"
-                
-                department_id_selected = request.POST.get('department_radio')
-                specialization_id_selected = request.POST.get('specialization_radio')
-                
-                department_chosen = hospital_department.objects.get(hospital_department_id=department_id_selected)
-                specialization_chosen = specialization.objects.get(specialization_id=specialization_id_selected)
-                
-                doctor.department_name = department_chosen
-                doctor.specialization = specialization_chosen
-                doctor.register_status = 'Pending'
-                doctor.certificate_image = certificate_image
-                
-                doctor.save()
-                
-                messages.success(request, 'Hospital Registration Request Sent')
-                
-                return redirect('doctor-dashboard')
-                
-                 
-            context = {'doctor': doctor, 'hospitals': hospitals, 'departments': departments, 'specializations': specializations}
-            return render(request, 'hospital-doctor-register.html', context)
-    else:
+    if not request.user.is_doctor:
         logout(request)
-        messages.info(request, 'Not Authorized')
+        messages.info(request, 'Not Authorized. Please log in as a doctor.')
         return render(request, 'doctor-login.html')
+
+    doctor = get_object_or_404(Doctor_Information, user=request.user)
+    hospital = get_object_or_404(Hospital_Information, hospital_id=pk)
+    
+    if request.method == 'POST':
+        form = DoctorRegistrationForm(request.POST, request.FILES, hospital_id=pk)
+        if form.is_valid():
+            department_chosen = form.cleaned_data['department']
+            specialization_chosen = form.cleaned_data['specialization'] 
+            certificate = form.cleaned_data['certificate_image']
+
+            doctor.department_name = department_chosen
+            doctor.specialization = specialization_chosen
+            doctor.register_status = 'Pending'
+            if certificate:
+                doctor.certificate_image = certificate
+            
+            doctor.save()
+            messages.success(request, 'Your registration request has been sent successfully!')
+            return redirect('doctor-dashboard')
+
+    else:
+        form = DoctorRegistrationForm(hospital_id=pk)
+
+    context = {
+        'form': form,
+        'doctor': doctor,
+        'hospitals': hospital,
+    }
+    return render(request, 'hospital-doctor-register.html', context)
     
    
 def testing(request):

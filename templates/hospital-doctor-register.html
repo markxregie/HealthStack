@@ -119,7 +119,123 @@
         justify-content: center;
         align-items: center;
     }
+                :root {
+                --accent-color: #95C270;
+                --accent-hover: #82ab61;
+                --text-dark: #333;
+                --text-light: #6c757d;
+                --card-shadow: 0 6px 20px rgba(0, 0, 0, 0.07);
+                --card-border-radius: 16px;
+                --body-bg: #f8f9fa;
+            }
 
+            body {
+                font-family: 'Poppins', sans-serif;
+                background-color: var(--body-bg);
+                color: var(--text-dark);
+            }
+
+            /* --- Breadcrumb & Titles --- */
+            .breadcrumb-bar {
+                background-color: var(--accent-color);
+                padding: 1.25rem 0;
+            }
+            .breadcrumb-title {
+                font-weight: 600;
+                color: var(--text-dark);
+            }
+            .breadcrumb-item a {
+                color: var(--accent-color);
+                transition: color 0.3s ease;
+            }
+            .breadcrumb-item a:hover {
+                color: var(--accent-hover);
+            }
+
+            /* --- Modern Patient Card Styling --- */
+            .pat-widget-profile {
+                border: none;
+                border-radius: var(--card-border-radius);
+                box-shadow: var(--card-shadow);
+                transition: transform 0.3s ease, box-shadow 0.3s ease;
+                text-align: center;
+                overflow: hidden;
+            }
+            .pat-widget-profile:hover {
+                transform: translateY(-8px);
+                box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            }
+            .pat-widget-profile .card-body {
+                padding: 1.5rem 1rem;
+            }
+            .pat-widget-profile .booking-doc-img img {
+                width: 90px;
+                height: 90px;
+                border-radius: 50%;
+                object-fit: cover;
+
+                border: 4px solid #fff;
+                box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            }
+            .pat-widget-profile .profile-det-info h3 {
+				text-align: center;
+                margin-bottom: 0.5rem;
+            }
+            .pat-widget-profile .profile-det-info h3 a {
+				align-items: center !important;
+                font-size: 1.1rem;
+                font-weight: 600;
+                color: var(--text-dark);
+                text-decoration: none;
+                transition: color 0.3s ease;
+            }
+            .pat-widget-profile .profile-det-info h3 a:hover {
+                color: var(--accent-color);
+            }
+            .pat-widget-profile .patient-details h5 {
+				
+                color: var(--text-light);
+                font-size: 0.85rem;
+                margin-bottom: 0.25rem;
+            }
+            .pat-widget-profile .patient-details i {
+                color: var(--accent-color);
+                margin-right: 5px;
+            }
+
+            /* --- Patient Info List --- */
+            .patient-info {
+				
+                border-top: 1px solid #f0f0f0;
+                margin-top: 1rem;
+                padding-top: 1rem;
+            }
+            .patient-info ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+            }
+            .patient-info ul li {
+                display: flex;
+                justify-content: space-between;
+                font-size: 0.9rem;
+                color: #555;
+                padding: 0.4rem 0.5rem;
+            }
+             .patient-info ul li:not(:last-child){
+                margin-bottom: 5px;
+            }
+            .patient-info ul li span {
+                font-weight: 500;
+                color: var(--text-dark);
+            }
+
+            /* --- Sidebar --- */
+            .profile-sidebar {
+                border: none;
+                box-shadow: var(--card-shadow);
+                border-radius: var(--card-border-radius);
+            }
 
 
     </style>
@@ -172,67 +288,29 @@
             <!-- / Profile Sidebar -->
 
             <div class="col-md-12 col-lg-8 col-xl-9">
-              <form action="{% url 'hospital-doctor-register' pk=hospitals.hospital_id %}" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
 
-                <div class="card">
-                    <div class="card-body">
-                        <h2 class="card-title" style="text-align: center;">Hospital Registation</h2>
-                        <hr>
-                        <div class="form-group row">
-                            <div class="col-md-6">
-                                <label class="col-form-label" style="font-size: 20px;">Choose Department</label>
-                                <div class="col-md-10">
-     
-                                    {% for department in departments %}
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" value="{{ department.hospital_department_id }}" name="department_radio"> {{ department.hospital_department_name }}
-                                        </label>
-                                    </div>
-                                    {% endfor %}
-                                    
-                                    
-                                </div>
+    <form action="{% url 'hospital-doctor-register' pk=hospitals.hospital_id %}" method="POST" enctype="multipart/form-data">
+        
+        {% csrf_token %}
 
-                            </div>
+        <div class="card">
+            <div class="card-body">
+                <h2 class="card-title" style="text-align: center;">Hospital Registration for {{ hospitals.hospital_name }}</h2>
+                <hr>
+                <p>Please select your department and specialization for this hospital, and upload your certificate if applicable.</p>
+                
+                {# Ang isang linyang ito na ang gagawa ng lahat ng form fields (dropdowns, file upload) at magpapakita ng errors #}
+                {{ form.as_p }}
 
-                            <div class="col-md-6">
-                                <label class="col-form-label" style="font-size: 20px;">Choose Specialization</label>
-                                <div class="col-md-10">
-
-                                    {% for specialization in specializations %}
-                                      
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="radio" value="{{ specialization.specialization_id }}" name="specialization_radio" id="flexRadioDefault2">
-                                        <label class="form-check-label" for="flexRadioDefault2">
-                                          {{ specialization.specialization_name }}
-                                        </label>
-                                      </div>
-                                      {% endfor %}
-                             
-                                </div>
-                            </div>                                       
-                        </div>
-
-                        <label class="col-form-label" style="font-size: 20px;text-align: center;">Drop Certificate</label>
-                        <div class="drop-zone">
-                            
-                            <span class="drop-zone__prompt">Drop file here or click to upload</span>
-                            <input type="file" name="certificate_image" class="drop-zone__input">
-                        </div>
-
-                    </div>
-                </div>
-                <div class="submit-section submit-btn-bottom center">
-                    <button type="submit" class="btn btn-info submit-btn" style="min-width: 205px;">Submit</button>
-                </div>
-              </form>  
-                          
             </div>
-          </div>
         </div>
-      </div>
+
+        <div class="submit-section submit-btn-bottom center">
+            <button type="submit" class="btn btn-info submit-btn" style="min-width: 205px;">Submit Registration</button>
+        </div>
+    </form> 
+    
+</div>
       <!-- /Page Content -->
 
      <!-- Footer -->

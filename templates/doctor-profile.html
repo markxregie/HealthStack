@@ -16,8 +16,8 @@
 
     <style>
         :root {
-            --primary-color: #95C270;
-            --secondary-color: #7ead5d;
+            --primary-color: #95C270 ;
+            --secondary-color: #6c757d;
             --light-bg: #f8f9fa;
             --card-bg: #ffffff;
             --text-color: #343a40;
@@ -46,7 +46,7 @@
         }
 
         .breadcrumb-bar {
-            background: linear-gradient(to right, var(--primary-color), #7ead5d);
+            background: linear-gradient(to right, var(--primary-color), #0056b3);
             color: white;
             padding: 40px 0;
         }
@@ -153,7 +153,7 @@
         }
 
         .apt-btn:hover {
-            background-color: #0056b3;
+            background-color: #95C270;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
@@ -329,7 +329,7 @@
                                             <h5 class="doc-hospital">{{doctor.hospital_name}}</h5>
                                             <p class="doc-department">{{doctor.specialization.specialization_name}}</p>
                                             <div class="clinic-details">
-                                                <p class="doc-location"><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</p>
+                                                <p class="doc-location"><i class="fas fa-map-marker-alt"></i>Philippines</p>
                                                 <ul class="clinic-gallery">
                                                     <li>
                                                         <a href="{% static 'HealthStack-System/images/Normal/gyno1.jpg'%}" data-fancybox="gallery" aria-label="Clinic Image 1">
@@ -358,8 +358,8 @@
                                     <div class="doc-info-right">
                                         <div class="clini-infos">
                                             <ul>
-                                                <li><i class="fas fa-map-marker-alt"></i> Dhaka, Bangladesh</li>
-                                                <li><i class="far fa-money-bill-alt"></i> {{doctor.consultation_fee}} BDT</li>
+                                                <li><i class="fas fa-map-marker-alt"></i> Philippines</li>
+                                                <li><i class="far fa-money-bill-alt"></i> ₱ {{doctor.consultation_fee}} </li>
                                             </ul>
                                         </div>
                                         {% if user.is_authenticated and user.is_patient %}

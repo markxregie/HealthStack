@@ -299,7 +299,7 @@
                     <li class="nav-item"><a href="{% url 'patient-dashboard' %}" class="nav-link">Dashboard</a></li>
                     <li class="nav-item"><a href="{% url 'pharmacy_shop' %}" class="nav-link">Shop</a></li>
                     <li class="nav-item active cart-link">
-                        <a href="{% url 'cart' %}" class="nav-link">
+                        <a href="{% url 'pharmacy-cart' %}" class="nav-link">
                             <span class="icon icon-shopping_cart" style="font-size: 1.2rem;"></span>
                             <span class="cart-badge">
                                 {{ order.count_cart_items }}
@@ -345,28 +345,28 @@
 
                     <div class="col-lg-4">
                         <div class="cart-summary-card">
-                            <h3 class="font-weight-bold mb-4">Cart Summary</h3>
-                            <div class="summary-item">
-                                <span>Subtotal</span>
-                                <span>{{ order.get_totals|floatformat:2 }} BDT</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Delivery Fee</span>
-                                <span>40.00 BDT</span>
-                            </div>
-                            <div class="summary-item">
-                                <span>Discount</span>
-                                <span>0.00 BDT</span>
-                            </div>
-                            <hr>
-                            <div class="summary-item summary-total">
-                                <span>Total</span>
-                                <span>{{ order.final_bill|floatformat:2 }} BDT</span>
-                            </div>
-                            <p class="text-center mt-4">
-                                <a href="{% url 'ssl-payment-request-medicine' pk=order.user.patient.patient_id id=order.id %}" class="btn btn-checkout">Proceed to Checkout</a>
-                            </p>
-                        </div>
+    <h3 class="font-weight-bold mb-4">Cart Summary</h3>
+    <div class="summary-item">
+        <span>Subtotal</span>
+        <span>₱ {{ order.get_totals|floatformat:2 }}</span>
+    </div>
+    <div class="summary-item">
+        <span>Delivery Fee</span>
+        <span>₱ 40.00</span>
+    </div>
+    <div class="summary-item">
+        <span>Discount</span>
+        <span>₱ 0.00</span>
+    </div>
+    <hr>
+    <div class="summary-item summary-total">
+        <span>Total</span>
+        <span>₱ {{ order.final_bill|floatformat:2 }}</span>
+    </div>
+    <p class="text-center mt-4">
+        <a href="{% url 'create-paymongo-payment' order_id=order.id %}" class="btn btn-checkout">Proceed to Checkout with PayMongo</a>
+    </p>
+</div>
                     </div>
                 </div>
             </div>
@@ -386,11 +386,11 @@
                     <ul class="list-unstyled contact-list">
                         <li>
                             <span class="icon icon-map-marker"></span>
-                            <span class="text">Dhanmondi, Dhaka, Bangladesh.</span>
+                            <span class="text">Philippines</span>
                         </li>
                         <li>
                             <span class="icon icon-phone"></span>
-                            <a href="tel://+23923929210" class="text">+2 392 3929 210</a>
+                            <a href="tel://+23923929210" class="text">+63 9134 12345</a>
                         </li>
                         <li>
                             <span class="icon icon-envelope"></span>

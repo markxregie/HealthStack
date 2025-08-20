@@ -4,7 +4,6 @@
     color: #95C270 !important;
   }
 </style>
-
 <nav class="navbar navbar-expand-lg header-nav">
   <div class="navbar-header">
     <a id="mobile_btn" href="javascript:void(0);">
@@ -16,7 +15,7 @@
     </a>
     <a href="{% url 'hospital_home'%}" class="navbar-brand logo">
       <img
-        src="{% static 'HealthStack-System/images/Normal/logo.jpg' %}"
+        src="{% static 'HealthStack-System/images/Normal/logo.png' %}"
         class="img-fluid"
         alt="Logo"
       />
@@ -67,7 +66,7 @@
       </div>
       <div class="header-contact-detail">
         <p class="contact-header">Contact</p>
-        <p class="contact-info-header">+88{{doctor.phone_number}}</p>
+        <p class="contact-info-header">{{doctor.phone_number}}</p>
       </div>
     </li>
     <!-- User Menu -->
