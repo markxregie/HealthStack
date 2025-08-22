@@ -16,7 +16,9 @@ urlpatterns = [
     path('ssl-payment-request-test/<int:pk>/<int:id>/<int:pk2>/', views.ssl_payment_request_test,name='ssl-payment-request-test'),
     path('payment-testing/<int:pk>/', views.payment_testing, name='payment-testing'),
     path('paymongo/appointment/<int:appointment_id>/',views.create_paymongo_appointment_payment,name='create-paymongo-appointment-payment'),
-
+    path('sslcommerz/paymongo/success/<int:appointment_id>/', views.paymongo_payment_success, name='paymongo-payment-success'),
+    path("paymongo/success/<int:appointment_id>/", views.paymongo_payment_success, name="paymongo-payment-success"),
+    path("paymongo/cancel/", views.paymongo_payment_cancel, name="paymongo-payment-cancel"),
 ]
 
 

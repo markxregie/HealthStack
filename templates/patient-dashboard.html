@@ -410,11 +410,13 @@
                                   {% endif %}
                                 </td>
                                 <td class="text-center">
-                                  {% if appointment.payment_status == 'pending' %}
-                                  <span class="badge bg-warning-light">Pending</span>
-                                  {% elif appointment.payment_status == 'VALID' %}
-                                  <span class="badge bg-success-light">Paid</span>
-                                  {% endif %}
+                                  {% if appointment.payment_status|lower == 'pending' %}
+    <span class="badge bg-warning-light">Pending</span>
+{% elif appointment.payment_status|lower == 'paid' %}
+    <span class="badge bg-success-light">Paid</span>
+{% elif appointment.payment_status|lower == 'failed' %}
+    <span class="badge bg-danger-light">Failed</span>
+{% endif %}
                                 </td>
                                 <td>
                                   <div class="table-action">
