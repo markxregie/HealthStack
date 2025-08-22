@@ -49,6 +49,72 @@
       <script src="assets/js/html5shiv.min.js"></script>
       <script src="assets/js/respond.min.js"></script>
     <![endif]-->
+
+    <!-- Custom Theme Colors -->
+    <style>
+      :root {
+        --primary-color: #95C270; /* Green */
+        --hover-bg-color: #e6f0c8; /* Light green hover */
+        --text-color: #333;
+      }
+
+      .card-table {
+        border-radius: 12px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      }
+
+      .card-header {
+        background: var(--primary-color);
+        border-bottom: none;
+        border-radius: 12px 12px 0 0;
+        padding: 20px;
+      }
+
+      .card-header h4,
+      .card-header p {
+        color: #95C270 !important; /* Make heading + subtext black */
+        margin: 0;
+      }
+
+      .table thead th {
+        background-color: #f8f9fa;
+        color: var(--text-color);
+        font-weight: 600;
+        border: none;
+        padding: 14px;
+        text-transform: uppercase;
+        font-size: 13px;
+      }
+
+      .table tbody td {
+        vertical-align: middle;
+        padding: 14px;
+        border-top: 1px solid #eee;
+      }
+
+      .table-hover tbody tr:hover {
+        background-color: var(--hover-bg-color);
+      }
+
+      .table-avatar img {
+        border: 2px solid var(--primary-color);
+      }
+
+      .btn-outline-info {
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: 14px;
+        transition: background 0.3s, color 0.3s;
+      }
+
+      .btn-outline-info:hover {
+        background: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #fff;
+      }
+    </style>
+
   </head>
   <body>
     <!-- Main Wrapper -->

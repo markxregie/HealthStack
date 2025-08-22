@@ -1,5 +1,11 @@
 {% load static %}
 
+<style>
+  .header-nav a:hover {
+    color: #95C270 !important;
+  }
+</style>
+
 <nav class="navbar navbar-expand-lg header-nav">
   <div class="navbar-header">
     <a id="mobile_btn" href="javascript:void(0);">
@@ -11,7 +17,7 @@
     </a>
     <a href="{% url 'hospital_home'%}" class="navbar-brand logo">
       <img
-        src="{% static 'HealthStack-System/images/Normal/logo.jpg' %}"
+        src="{% static 'HealthStack-System/images/Normal/logo.png' %}"
         class="img-fluid"
         alt="Logo"
       />
@@ -34,57 +40,24 @@
       <li>
         <a href="{% url 'hospital_home'%}">Home</a>
       </li>
-
       <li>
         <a href="{% url 'patient-dashboard' %}">Dashboard</a>
       </li>
-
       <li class="has-submenu">
         <a href="#">Hospital <i class="fas fa-chevron-down"></i></a>
         <ul class="submenu">
           <li><a href="{% url 'multiple-hospital' %}">Hospital Info</a></li>
           <li><a href="{% url 'search' %}">Search Doctor</a></li>
-          
-          <!-- <li><a href="#">Checkout</a></li> -->
-          <!-- <li>
-            <a href="">Booking Success</a>
-          </li> -->
-          
-          <!-- <li><a href="#">Favourites</a></li> -->
-          <!-- <li><a href="#">Chat</a></li> -->
         </ul>
       </li>
-
       {% if user.is_authenticated and user.is_patient %}
       <li>
         <a href="{% url 'chat-home' pk=user.id %}">Chat with Doctor</a>
       </li>
       {% endif %}
-
       <li>
-        <a href="{% url 'pharmacy_shop' %}">Medical Shop</a>
+        <a href="{% url 'pharmacy-shop' %}">Medical Shop</a>
       </li>
-      <!-- <li class="has-submenu">
-                  <a href="#">Pages <i class="fas fa-chevron-down"></i></a>
-                  <ul class="submenu">
-                    <li><a href="voice-call.html">Voice Call</a></li>
-                    <li><a href="video-call.html">Video Call</a></li>
-                    <li><a href="search.html">Search Doctors</a></li>
-                    <li><a href="calendar.html">Calendar</a></li>
-                    <li><a href="components.html">Components</a></li>
-                    <li class="has-submenu">
-                      <a href="invoices.html">Invoices</a>
-                      <ul class="submenu">
-                        <li><a href="invoices.html">Invoices</a></li>
-                        <li><a href="invoice-view.html">Invoice View</a></li>
-                      </ul>
-                    </li>
-                    <li><a href="blank-page.html">Starter Page</a></li>
-                    <li><a href="login.html">Login</a></li>
-                    <li><a href="register.html">Register</a></li>
-                    <li><a href="forgot-password.html">Forgot Password</a></li>
-                  </ul>
-                </li> -->
     </ul>
   </div>
   <ul class="nav header-navbar-rht">
@@ -94,10 +67,9 @@
       </div>
       <div class="header-contact-detail">
         <p class="contact-header">Contact</p>
-        <p class="contact-info-header">+880{{patient.phone_number}}</p>
+        <p class="contact-info-header">{{patient.phone_number}}</p>
       </div>
     </li>
-    <!-- User Menu -->
     <li class="nav-item dropdown has-arrow logged-item">
       <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
         <span class="user-img">
@@ -123,15 +95,10 @@
             <p class="text-muted mb-0">Patient</p>
           </div>
         </div>
-        <a class="dropdown-item" href="{% url 'patient-dashboard' %}"
-          >Dashboard</a
-        >
-        <a class="dropdown-item" href="{% url 'profile-settings' %}"
-          >Profile Settings</a
-        >
+        <a class="dropdown-item" href="{% url 'patient-dashboard' %}">Dashboard</a>
+        <a class="dropdown-item" href="{% url 'profile-settings' %}">Profile Settings</a>
         <a class="dropdown-item" href="{% url 'logout' %}">Logout</a>
       </div>
     </li>
-    <!-- /User Menu -->
   </ul>
 </nav>

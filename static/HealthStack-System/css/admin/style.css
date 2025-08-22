@@ -2026,7 +2026,7 @@ html.menu-opened body {
 }
 .login-wrapper .loginbox .login-left {
     align-items: center;
-    background: linear-gradient(180deg, #1b5a90, #00d0f1);
+    background-color: #95C270 !important;
     border-radius: 6px 0 0 6px;
     flex-direction: column;
     justify-content: center;

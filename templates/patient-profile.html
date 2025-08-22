@@ -513,15 +513,13 @@
     <!-- Custom JS -->
     <script src="{% static 'HealthStack-System/Outside_assets/js/script.js' %}"></script>
 
-    {% if messages %}
-    <script>
-        {% for message in messages %}
-            $(document).ready(function () {
-                $('.toast').toast('show');
-            });
-        {% endfor %}
-    </script>
-  {% endif %}
+{% if messages %}
+<script>
+    $(document).ready(function () {
+        $('.toast').toast('show');
+    });
+</script>
+{% endif %}
 
 
   </body>

@@ -2,7 +2,7 @@ import email
 from email.mime import image
 from multiprocessing import context
 from unicodedata import name
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
@@ -12,6 +12,7 @@ from django.contrib import messages
 from hospital.models import Hospital_Information, User, Patient
 from django.db.models import Q
 from pharmacy.models import Medicine, Pharmacist
+from pharmacy.forms import MedicineForm
 from doctor.models import Doctor_Information, Prescription, Prescription_test, Report, Appointment, Experience , Education,Specimen,Test
 from pharmacy.models import Order, Cart
 from sslcommerz.models import Payment
@@ -20,6 +21,7 @@ from .forms import AdminUserCreationForm, LabWorkerCreationForm, EditHospitalFor
 from .models import Admin_Information,specialization,service,hospital_department, Clinical_Laboratory_Technician, Test_Information
 import random,re
 import string
+import uuid
 from django.db.models import  Count
 from datetime import datetime
 import datetime
@@ -253,64 +255,86 @@ def hospital_admin_profile(request, pk):
     context = {'admin': admin, 'form': form}
     return render(request, 'hospital_admin/hospital-admin-profile.html', context)
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.decorators import login_required
+from .models import Hospital_Information, hospital_department, specialization, service, Admin_Information
+
 @csrf_exempt
 @login_required(login_url='admin_login')
 def add_hospital(request):
-    if  request.user.is_hospital_admin:
+    if request.user.is_hospital_admin:
         user = Admin_Information.objects.get(user=request.user)
 
         if request.method == 'POST':
-            hospital = Hospital_Information()
-            
-            if 'featured_image' in request.FILES:
-                featured_image = request.FILES['featured_image']
-            else:
-                featured_image = "departments/default.png"
-            
+            # Handle image upload
+            featured_image = request.FILES.get('featured_image', "departments/default.png")
+
+            # Get form data
             hospital_name = request.POST.get('hospital_name')
             address = request.POST.get('address')
             description = request.POST.get('description')
             email = request.POST.get('email')
-            phone_number = request.POST.get('phone_number') 
+            phone_number = request.POST.get('phone_number')
             hospital_type = request.POST.get('type')
             specialization_name = request.POST.getlist('specialization')
             department_name = request.POST.getlist('department')
             service_name = request.POST.getlist('service')
-            
-        
-            hospital.name = hospital_name
-            hospital.description = description
-            hospital.address = address
-            hospital.email = email
-            hospital.phone_number =phone_number
-            hospital.featured_image=featured_image 
-            hospital.hospital_type=hospital_type
-            
-            # print(department_name[0])
-         
-            hospital.save()
-            
-            for i in range(len(department_name)):
-                departments = hospital_department(hospital=hospital)
-                # print(department_name[i])
-                departments.hospital_department_name = department_name[i]
-                departments.save()
-                
-            for i in range(len(specialization_name)):
-                specializations = specialization(hospital=hospital)
-                specializations.specialization_name=specialization_name[i]
-                specializations.save()
-                
-            for i in range(len(service_name)):
-                services = service(hospital=hospital)
-                services.service_name = service_name[i]
-                services.save()
-            
-            messages.success(request, 'Hospital Added')
-            return redirect('hospital-list')
 
-        context = { 'admin': user}
-        return render(request, 'hospital_admin/add-hospital.html',context)
+            # Validation: Required fields
+            if not hospital_name or not address or not email or not phone_number:
+                messages.error(request, "Please fill in all required fields.")
+                return redirect('add-hospital')
+
+            # Validate phone number
+            try:
+                phone_number = int(phone_number)
+            except ValueError:
+                messages.error(request, "Phone number must be a valid number.")
+                return redirect('add-hospital')
+
+            try:
+                # Create hospital
+                hospital = Hospital_Information(
+                    name=hospital_name,
+                    description=description,
+                    address=address,
+                    email=email,
+                    phone_number=phone_number,
+                    featured_image=featured_image,
+                    hospital_type=hospital_type
+                )
+                hospital.save()
+
+                # Save departments
+                for dept_name in department_name:
+                    if dept_name.strip():  # skip empty
+                        dept = hospital_department(hospital=hospital, hospital_department_name=dept_name)
+                        dept.save()
+
+                # Save specializations
+                for spec_name in specialization_name:
+                    if spec_name.strip():
+                        spec = specialization(hospital=hospital, specialization_name=spec_name)
+                        spec.save()
+
+                # Save services
+                for serv_name in service_name:
+                    if serv_name.strip():
+                        serv = service(hospital=hospital, service_name=serv_name)
+                        serv.save()
+
+                messages.success(request, 'Hospital Added Successfully!')
+                return redirect('hospital-list')
+
+            except Exception as e:
+                messages.error(request, f"An error occurred while saving the hospital: {e}")
+                return redirect('add-hospital')
+
+        context = {'admin': user}
+        return render(request, 'hospital_admin/add-hospital.html', context)
+
 
 
 # def edit_hospital(request, pk):
@@ -587,27 +611,28 @@ def medicine_list(request):
     if request.user.is_authenticated:
         if request.user.is_pharmacist:
             pharmacist = Pharmacist.objects.get(user=request.user)
-            medicine = Medicine.objects.all()
+            
+            # Get search query
+            medicine_list, search_query = searchMedicines(request)
+            
+            # Pagination
+            from django.core.paginator import Paginator
+            paginator = Paginator(medicine_list, 7)  # Show 7 medicines per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            
             orders = Order.objects.filter(user=request.user, ordered=False)
             carts = Cart.objects.filter(user=request.user, purchased=False)
             
-            medicine, search_query = searchMedicines(request)
-            
-            if carts.exists() and orders.exists():
-                order = orders[0]
-                context = {'medicine':medicine,
-                        'pharmacist':pharmacist,
-                        'search_query': search_query,
-                        'order': order,
-                        'carts': carts,}
-                return render(request, 'hospital_admin/medicine-list.html',context)
-            else:
-                context = {'medicine':medicine,
-                            'pharmacist':pharmacist,
-                            'search_query': search_query,
-                            'orders': orders,
-                            'carts': carts,}
-                return render(request, 'hospital_admin/medicine-list.html',context)
+            context = {
+                'medicine': page_obj,  # Use paginated object
+                'pharmacist': pharmacist,
+                'search_query': search_query,
+                'orders': orders,
+                'carts': carts,
+                'page_obj': page_obj,  # Add page_obj for pagination controls
+            }
+            return render(request, 'hospital_admin/medicine-list.html', context)
                 
 
 @login_required(login_url='admin_login')
@@ -621,84 +646,119 @@ def generate_random_medicine_ID():
 @csrf_exempt
 @login_required(login_url='admin_login')
 def add_medicine(request):
+    user = None
     if request.user.is_pharmacist:
-     user = Pharmacist.objects.get(user=request.user)
-     
+        user = Pharmacist.objects.get(user=request.user)
+    elif request.user.is_hospital_admin:
+        user = Admin_Information.objects.get(user=request.user)
+
     if request.method == 'POST':
-       medicine = Medicine()
-       
-       if 'featured_image' in request.FILES:
-           featured_image = request.FILES['featured_image']
-       else:
-           featured_image = "medicines/default.png"
-       
-       name = request.POST.get('name')
-       Prescription_reqiuired = request.POST.get('requirement_type')     
-       weight = request.POST.get('weight') 
-       quantity = request.POST.get('quantity')
-       medicine_category = request.POST.get('category_type')
-       medicine_type = request.POST.get('medicine_type')
-       description = request.POST.get('description')
-       price = request.POST.get('price')
-       
-       medicine.name = name
-       medicine.Prescription_reqiuired = Prescription_reqiuired
-       medicine.weight = weight
-       medicine.quantity = quantity
-       medicine.medicine_category = medicine_category
-       medicine.medicine_type = medicine_type
-       medicine.description = description
-       medicine.price = price
-       medicine.featured_image = featured_image
-       medicine.stock_quantity = 80
-       #medicine.medicine_id = generate_random_medicine_ID()
-       
-       medicine.save()
-       
-       return redirect('medicine-list')
-   
-    return render(request, 'hospital_admin/add-medicine.html',{'admin': user})
+        # Get form data with proper validation
+        name = request.POST.get('name', '').strip()
+        weight = request.POST.get('weight', '').strip()
+        quantity_str = request.POST.get('quantity', '').strip()
+        price_str = request.POST.get('price', '').strip()
+        requirement_type = request.POST.get('requirement_type', '')
+        category_type = request.POST.get('category_type', '')
+        medicine_type = request.POST.get('medicine_type', '')
+        description = request.POST.get('description', '').strip()
+        featured_image = request.FILES.get('featured_image')
+
+        # Initialize error flag
+        errors = []
+
+        # Validate required fields
+        if not name:
+            errors.append('Medicine name is required.')
+        
+        if not weight:
+            errors.append('Weight is required.')
+        
+        # Validate quantity
+        try:
+            quantity = int(quantity_str)
+            if quantity < 0:
+                errors.append('Quantity must be a positive number.')
+        except (ValueError, TypeError):
+            errors.append('Quantity must be a valid number.')
+        
+        # Validate price
+        try:
+            price = float(price_str)
+            if price < 0:
+                errors.append('Price must be a positive number.')
+        except (ValueError, TypeError):
+            errors.append('Price must be a valid number.')
+
+        # If there are errors, return to form with messages
+        if errors:
+            for error in errors:
+                messages.error(request, error)
+            return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
+
+        # Generate unique medicine ID
+        medicine_id = f"#M-{str(uuid.uuid4())[:8].upper()}"
+
+        try:
+            # Create medicine instance
+            medicine = Medicine(
+                name=name,
+                weight=weight,
+                quantity=quantity,
+                price=price,
+                Prescription_reqiuired=requirement_type,
+                medicine_category=category_type,
+                medicine_type=medicine_type,
+                description=description,
+                featured_image=featured_image or 'medicines/default.png',
+                stock_quantity=quantity,
+                medicine_id=medicine_id
+            )
+            
+            # Save to database
+            medicine.save()
+            
+            # Success message and redirect
+            messages.success(request, f'Medicine "{name}" added successfully!')
+            return redirect('medicine-list')
+            
+        except Exception as e:
+            messages.error(request, f'Error adding medicine: {str(e)}')
+            return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
+
+    return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
 
 @csrf_exempt
 @login_required(login_url='admin_login')
 def edit_medicine(request, pk):
     if request.user.is_pharmacist:
         user = Pharmacist.objects.get(user=request.user)
+    elif request.user.is_hospital_admin:
+        user = Admin_Information.objects.get(user=request.user)
+    
+    medicine = get_object_or_404(Medicine, serial_number=pk)
+    
+    if request.method == 'POST':
+        form = MedicineForm(request.POST, request.FILES, instance=medicine)
         
-        medicine = Medicine.objects.get(serial_number=pk)
-        old_medicine_image = medicine.featured_image
-        
-        if request.method == 'POST':
-            if 'featured_image' in request.FILES:
-                featured_image = request.FILES['featured_image']
-            else:
-                featured_image = old_medicine_image
-                name = request.POST.get('name')
-                Prescription_reqiuired = request.POST.get('requirement_type')     
-                weight = request.POST.get('weight') 
-                quantity = request.POST.get('quantity')
-                medicine_category = request.POST.get('category_type')
-                medicine_type = request.POST.get('medicine_type')
-                description = request.POST.get('description')
-                price = request.POST.get('price')
-                
-                medicine.name = name
-                medicine.Prescription_reqiuired = Prescription_reqiuired
-                medicine.weight = weight
-                medicine.quantity = quantity
-                medicine.medicine_category = medicine_category
-                medicine.medicine_type = medicine_type
-                medicine.description = description
-                medicine.price = price
-                medicine.featured_image = featured_image
-                medicine.stock_quantity = 80
-                #medicine.medicine_id = generate_random_medicine_ID()
-            
-                medicine.save()
-            
-                return redirect('medicine-list')
-   
-    return render(request, 'hospital_admin/edit-medicine.html',{'medicine': medicine,'admin': user})
+        if form.is_valid():
+            medicine = form.save(commit=False)
+            # Only update stock_quantity if it was explicitly provided in the form
+            # Otherwise, keep the existing stock_quantity value
+            if 'stock_quantity' in request.POST and request.POST['stock_quantity']:
+                try:
+                    medicine.stock_quantity = int(request.POST['stock_quantity'])
+                except ValueError:
+                    pass  # Keep existing value if conversion fails
+            medicine.save()
+            messages.success(request, f'Medicine "{medicine.name}" updated successfully!')
+            return redirect('medicine-list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = MedicineForm(instance=medicine)
+
+    return render(request, 'hospital_admin/edit-medicine.html', {'form': form, 'medicine': medicine, 'admin': user})
 
 
 @csrf_exempt
@@ -1043,13 +1103,30 @@ def pharmacist_dashboard(request):
             total_order_count = Order.objects.annotate(count=Count('orderitems'))
             total_cart_count = Cart.objects.annotate(count=Count('item'))
 
-            medicine = Medicine.objects.all()
+            # Inventory levels for pie chart
+            low_stock_count = Medicine.objects.filter(stock_quantity__lt=15).count()
+            medium_stock_count = Medicine.objects.filter(stock_quantity__gte=15, stock_quantity__lte=100).count()
+            high_stock_count = Medicine.objects.filter(stock_quantity__gt=100).count()
             
-            context = {'pharmacist':pharmacist, 'medicine':medicine,
+            inventory_data = {
+                'low_stock': low_stock_count,
+                'medium_stock': medium_stock_count,
+                'high_stock': high_stock_count
+            }
+
+            # Pagination for medicine list
+            from django.core.paginator import Paginator
+            medicine_list = Medicine.objects.all()
+            paginator = Paginator(medicine_list, 7)  # Show 7 medicines per page
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+            
+            context = {'pharmacist':pharmacist, 'medicine':page_obj,
                        'total_pharmacist_count':total_pharmacist_count, 
                        'total_medicine_count':total_medicine_count, 
                        'total_order_count':total_order_count,
-                       'total_cart_count':total_cart_count}
+                       'total_cart_count':total_cart_count,
+                       'inventory_data': inventory_data}
             return render(request, 'hospital_admin/pharmacist-dashboard.html',context)
 
 @csrf_exempt
@@ -1061,4 +1138,3 @@ def report_history(request):
             report = Report.objects.all()
             context = {'report':report,'lab_workers':lab_workers}
             return render(request, 'hospital_admin/report-list.html',context)
-

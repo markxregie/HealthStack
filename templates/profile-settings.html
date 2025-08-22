@@ -58,6 +58,44 @@
       <script src="assets/js/html5shiv.min.js"></script>
       <script src="assets/js/respond.min.js"></script>
     <![endif]-->
+    <style>
+          body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0;
+    }
+        .breadcrumb-bar {
+      background: linear-gradient(90deg, #95C270, #95C270);
+      padding: 1rem 0.5rem;
+      box-shadow: 0 3px 8px rgb(0 0 0 / 0.12);
+      border-radius: 0 0 12px 12px;
+    }
+    .breadcrumb-bar .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+    .breadcrumb-bar .breadcrumb-item a {
+      color: #f0f6e9;
+      transition: color 0.3s ease;
+    }
+    .breadcrumb-bar .breadcrumb-item a:hover {
+      color: #d1e89b;
+      text-decoration: underline;
+    }
+    .breadcrumb-bar .breadcrumb-item.active {
+      color: #e9f7cf;
+    }
+    .breadcrumb-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 1.7rem;
+      margin: 0;
+    }
+      </style>
   </head>
   <body>
     <!-- Main Wrapper -->
@@ -67,8 +105,8 @@
       <!-- /Header -->
 
       <!-- Breadcrumb -->
-      <div class="breadcrumb-bar">
-        <div class="container-fluid">
+      <div class="breadcrumb-bar" style="background-color: #95C270;">
+        <div class="container-fluid"style="background-color: #95C270;">
           <div class="row align-items-center">
             <div class="col-md-12 col-12">
               <nav aria-label="breadcrumb" class="page-breadcrumb">
@@ -124,7 +162,7 @@
 															<img src="{{patient.featured_image.url}}" alt="User Image">
 														</div>
 														<div class="upload-img">
-															<div class="change-photo-btn">
+															<div class="change-photo-btn" style="background-color: #95C270;">
 																<span><i class="fa fa-upload"></i> Upload Photo</span>
 																<input type="file" class="upload" name="featured_image">
 															</div>
@@ -150,14 +188,14 @@
 
                       <div class="col-12 col-md-6">
 												<div class="form-group">
-													<label>Name</label>
+													<label>Name<span class="text-danger">*</span></label>
 													<input type="text" class="form-control" value="{{ patient.name }}" name="name">
 												</div>
 											</div>
 							
 											<div class="col-12 col-md-6">
 												<div class="form-group">
-													<label>Date of Birth</label>
+													<label>Date of Birth<span class="text-danger">*</span></label>
 														<input type="text" class="form-control datetimepicker" value="{{patient.dob}}" name="dob">
 												</div>
 											</div>
@@ -180,19 +218,19 @@
 										
 											<div class="col-12 col-md-6">
 												<div class="form-group">
-													<label>Mobile</label>
+													<label>Mobile<span class="text-danger">*</span></label>
 													<input type="text" value="{{patient.phone_number}}" class="form-control" name="phone_number">
 												</div>
 											</div>
 											<div class="col-12 col-md-6">
 												<div class="form-group">
-												<label>Address</label>
+												<label>Address<span class="text-danger">*</span></label>
 													<input type="text" class="form-control" value="{{patient.address}}" name="address">
 												</div>
 											</div>
                       <div class="col-12 col-md-6">
 												<div class="form-group">
-												<label>Age</label>
+												<label>Age<span class="text-danger">*</span></label>
 													<input type="text" class="form-control" value="{{patient.age}}" name="age">
 												</div>
 											</div>
@@ -209,10 +247,14 @@
 												</div>
 											</div>
 										</div>
-										<div class="submit-section">
-											<button type="submit" class="btn btn-primary submit-btn">Save Changes</button>
-										</div>
-									</form>
+                      <div class="submit-section" style="text-align:left;">
+                          <button type="submit" 
+                              class="btn btn-primary submit-btn" 
+                              style="background-color: #95C270; border: none;">
+                              Save Changes
+                          </button>
+                      </div>
+
 									<!-- /Profile Settings Form -->
 									
 								</div>
@@ -252,6 +294,8 @@
 
     <!-- Searchbar JS -->
     <script src="{% static 'HealthStack-System/js/Normal/sidebar.js' %}"></script>
+
+    
   </body>
 
   <!-- doccure/profile-settings.html  30 Nov 2019 04:12:18 GMT -->

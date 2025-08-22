@@ -1509,15 +1509,15 @@ button.bg-danger:hover {
 .slick-prev:focus,
 .slick-next:hover,
 .slick-next:focus {
-    background-color: #0de0fe;
-	color: #fff;
+    background-color: #95C270 !important;
+	color: #95C270;
 	opacity: 1;
 }
 .slick-prev:hover:before,
 .slick-prev:focus:before,
 .slick-next:hover:before,
 .slick-next:focus:before {
-	color: #fff;
+	color: #95C270 !important;
     opacity: 1;
 }
 .slick-prev.slick-disabled:before,
@@ -2005,7 +2005,7 @@ html.menu-opened body {
 -----------------------*/
 
 .footer {
-    background-color: #15558d;
+    background-color: #95C270;
 }
 .footer .footer-top {
 	padding: 40px 0;
@@ -6779,4 +6779,3 @@ home-image{
 		margin-bottom: 10px;
 	}
 }
-

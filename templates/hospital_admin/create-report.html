@@ -33,6 +33,79 @@
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
 		<![endif]-->
+    <style>
+      :root {
+        --primary-color: #95C270;   /* Green */
+        --hover-bg-color: #e6f0c8;  /* Light green hover */
+        --text-color: #333333;      /* Default dark text */
+        --heading-color: #222222;   /* Darker titles */
+        --delete-color: #dc3545;    /* Bootstrap red */
+        --delete-hover: #a71d2a;    /* Darker red on hover */
+      }
+
+      /* Default text colors */
+      body, .content, .page-wrapper, .breadcrumb, .breadcrumb-title,
+      .card-body, .form-group label, table, td, th {
+        color: var(--text-color) !important;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        color: var(--heading-color) !important;
+      }
+
+      /* Buttons (default green) */
+      button,
+      .btn {
+        background-color: var(--primary-color) !important;
+        border-color: var(--primary-color) !important;
+        color: #fff !important;
+        transition: background 0.3s;
+      }
+
+      button:hover,
+      .btn:hover {
+        background-color: var(--hover-bg-color) !important;
+        color: var(--text-color) !important;
+      }
+
+      /* Delete button override */
+      .btn-danger,
+      button.btn-danger {
+        background-color: var(--delete-color) !important;
+        border-color: var(--delete-color) !important;
+        color: #fff !important;
+      }
+
+      .btn-danger:hover,
+      button.btn-danger:hover {
+        background-color: var(--delete-hover) !important;
+        border-color: var(--delete-hover) !important;
+        color: #fff !important;
+      }
+
+      /* Links */
+      a {
+        color: var(--primary-color);
+      }
+
+      a:hover {
+        color: var(--heading-color);
+        background-color: var(--hover-bg-color);
+        border-radius: 6px;
+      }
+
+      /* Card headers */
+      .card-title,
+      .card-header h4,
+      .card-header p {
+        color: var(--heading-color) !important;
+      }
+
+      /* Breadcrumb active */
+      .breadcrumb .active {
+        color: var(--primary-color) !important;
+      }
+      </style>
     </head>
     <body>
     <!-- Main Wrapper -->

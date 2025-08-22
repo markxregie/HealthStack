@@ -1,9 +1,130 @@
+<style>
+:root {
+    --primary-color: #95C270; /* Green */
+    --hover-bg-color: #e6f0c8; /* Light green hover */
+    --text-color: #333;
+}
+
+/* Header Left (Logo) */
+.header-left .logo img {
+    max-height: 45px;
+}
+
+/* Toggle Buttons */
+#toggle_btn, .mobile_btn {
+    color: var(--primary-color);
+    font-size: 20px;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 6px;
+    transition: color 0.2s ease, background 0.2s ease;
+}
+#toggle_btn:hover, .mobile_btn:hover {
+    background: var(--hover-bg-color);
+    color: var(--text-color);
+}
+
+/* Notification Badge */
+.noti-dropdown .badge {
+    background-color: var(--primary-color);
+    color: #fff;
+    font-size: 12px;
+    padding: 4px 6px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Notification Dropdown */
+.notifications {
+    border: 1px solid var(--primary-color);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+}
+.topnav-dropdown-header {
+    background-color: var(--primary-color);
+    color: #fff;
+    padding: 10px;
+    font-weight: 500;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.topnav-dropdown-header .clear-noti {
+    color: #fff;
+    font-size: 13px;
+    text-decoration: underline;
+}
+.topnav-dropdown-header .clear-noti:hover {
+    color: var(--hover-bg-color);
+}
+.notification-list a {
+    display: block;
+    padding: 10px;
+    transition: background 0.2s ease;
+}
+.notification-list a:hover {
+    background: var(--hover-bg-color);
+}
+.topnav-dropdown-footer a {
+    display: block;
+    text-align: center;
+    padding: 8px;
+    color: var(--primary-color);
+    font-weight: 500;
+    border-top: 1px solid #eee;
+}
+.topnav-dropdown-footer a:hover {
+    background: var(--hover-bg-color);
+}
+
+/* User Dropdown */
+.dropdown-menu {
+    border: 1px solid var(--primary-color);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+    min-width: 200px;
+}
+
+/* User Header */
+.user-header {
+    background: var(--hover-bg-color);
+    padding: 15px;
+    text-align: center;
+}
+.user-header .avatar img {
+    border: 2px solid var(--primary-color);
+}
+.user-header .user-text h6 {
+    margin: 8px 0 3px;
+    font-size: 15px;
+    font-weight: bold;
+    color: var(--text-color);
+}
+.user-header .user-text p {
+    font-size: 13px;
+    color: #666;
+}
+
+/* Dropdown Items */
+.dropdown-menu .dropdown-item {
+    color: var(--text-color);
+    padding: 10px 15px;
+    transition: all 0.2s ease;
+}
+.dropdown-menu .dropdown-item:hover {
+    background: var(--hover-bg-color);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+</style>
+
 {% load static %}
 		
     <!-- Logo -->
     <div class="header-left">
         <a href="{% url 'admin-dashboard' %}" class="logo">
-            <img src="{% static 'HealthStack-System/images/Normal/logo.jpg' %}" alt="Logo">
+            <img src="{% static 'HealthStack-System/images/Normal/logo.PNG' %}" alt="Logo">
         </a>
         <a href="{% url 'admin-dashboard' %}" class="logo logo-small">
             <img src="{% static 'HealthStack-System/images/Normal/favicon.png' %}" alt="Logo" width="30" height="30">
@@ -30,42 +151,6 @@
     
     <!-- Header Right Menu -->
     <ul class="nav user-menu">
-
-        <!-- Notifications -->
-        <li class="nav-item dropdown noti-dropdown">
-            <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
-                <i class="fe fe-bell"></i> <span class="badge badge-pill">3</span>
-            </a>
-            <div class="dropdown-menu notifications">
-                <div class="topnav-dropdown-header">
-                    <span class="notification-title">Notifications</span>
-                    <a href="javascript:void(0)" class="clear-noti"> Clear All </a>
-                </div>
-                <div class="noti-content">
-                    <ul class="notification-list">
-                        <li class="notification-message">
-                            <a href="#">
-                                <div class="media">
-                                    <span class="avatar avatar-sm">
-                                        <img class="avatar-img rounded-circle" alt="User Image" src="assets/img/doctors/doctor-thumb-01.jpg">
-                                    </span>
-                                    <div class="media-body">
-                                        <p class="noti-details"><span class="noti-title">Dr. Ruby Perrin</span> Schedule <span class="noti-title">her appointment</span></p>
-                                        <p class="noti-time"><span class="notification-time">4 mins ago</span></p>
-                                    </div>
-                                </div>
-                            </a>
-                        </li>
-                       
-                    </ul>
-                </div>
-                <div class="topnav-dropdown-footer">
-                    <a href="#">View all Notifications</a>
-                </div>
-            </div>
-        </li>
-        <!-- /Notifications -->
-        
         <!-- User Menu -->
         <li class="nav-item dropdown has-arrow">
             <a href="#" class="dropdown-toggle nav-link" data-toggle="dropdown">
@@ -81,8 +166,7 @@
                         <p class="text-muted mb-0">Administrator</p>
                     </div>
                 </div>
-                <a class="dropdown-item" href="{%url 'hospital-admin-profile' pk=user.id %}">My Profile</a>
-                <a class="dropdown-item" href="settings.html">Settings</a>
+        
                 <a class="dropdown-item" href="{% url 'admin-logout' %}">Logout</a>
             </div>
         </li>
