@@ -124,12 +124,22 @@ def cart_view(request):
 def add_to_cart(request, pk):
     if request.user.is_authenticated and request.user.is_patient:
         item = get_object_or_404(Medicine, pk=pk)
+        
+        # Check if item has sufficient unit quantity
+        if item.quantity <= 0:
+            messages.error(request, f"{item.name} is out of stock.")
+            return redirect('pharmacy-shop')
+        
         order_item, created = Cart.objects.get_or_create(item=item, user=request.user, purchased=False)
         order_qs = Order.objects.filter(user=request.user, ordered=False)
 
         if order_qs.exists():
             order = order_qs[0]
             if order.orderitems.filter(item=item).exists():
+                # Check if adding one more would exceed unit quantity
+                if order_item.quantity + 1 > item.quantity:
+                    messages.error(request, f"Cannot add more {item.name}. Only {item.quantity} units left.")
+                    return redirect('pharmacy-cart')
                 order_item.quantity += 1
                 order_item.save()
                 messages.info(request, f"{item.name} quantity was updated.")
@@ -182,6 +192,10 @@ def increase_cart(request, pk):
             order = order_qs[0]
             if order.orderitems.filter(item=item).exists():
                 order_item = Cart.objects.filter(item=item, user=request.user, purchased=False)[0]
+                # Check if increasing would exceed unit quantity
+                if order_item.quantity + 1 > item.quantity:
+                    messages.error(request, f"Cannot add more {item.name}. Only {item.quantity} units left.")
+                    return redirect('pharmacy-cart')
                 order_item.quantity += 1
                 order_item.save()
                 messages.info(request, f"{item.name} quantity has been updated.")
@@ -334,15 +348,31 @@ def payment_success(request):
     except requests.RequestException as e:
         messages.warning(request, f"Could not fetch payment ID: {e}")
 
-    order.ordered = True
-    order.payment_id = payment_id
-    order.payment_status = "Paid"
-    order.save()
+    # Check stock availability before processing
+    stock_available, item_name = order.check_stock_availability()
+    if not stock_available:
+        messages.error(request, f"Insufficient stock for {item_name}. Please adjust your cart.")
+        return redirect('pharmacy-cart')
 
-    Cart.objects.filter(user=request.user, purchased=False).delete()
+    try:
+        # Decrease stock quantities
+        order.stock_quantity_decrease()
+        
+        # Mark order as completed
+        order.ordered = True
+        order.payment_id = payment_id
+        order.payment_status = "Paid"
+        order.save()
 
-    messages.success(request, "Payment verified and successful! Thank you for your purchase.")
-    return redirect('patient-dashboard')
+        # Mark cart items as purchased
+        Cart.objects.filter(user=request.user, purchased=False).update(purchased=True)
+
+        messages.success(request, "Payment verified and successful! Thank you for your purchase.")
+        return redirect('patient-dashboard')
+        
+    except ValueError as e:
+        messages.error(request, str(e))
+        return redirect('pharmacy-cart')
 
 
 @login_required(login_url="login")

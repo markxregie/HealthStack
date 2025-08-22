@@ -2,7 +2,7 @@ import email
 from email.mime import image
 from multiprocessing import context
 from unicodedata import name
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
@@ -12,6 +12,7 @@ from django.contrib import messages
 from hospital.models import Hospital_Information, User, Patient
 from django.db.models import Q
 from pharmacy.models import Medicine, Pharmacist
+from pharmacy.forms import MedicineForm
 from doctor.models import Doctor_Information, Prescription, Prescription_test, Report, Appointment, Experience , Education,Specimen,Test
 from pharmacy.models import Order, Cart
 from sslcommerz.models import Payment
@@ -20,6 +21,7 @@ from .forms import AdminUserCreationForm, LabWorkerCreationForm, EditHospitalFor
 from .models import Admin_Information,specialization,service,hospital_department, Clinical_Laboratory_Technician, Test_Information
 import random,re
 import string
+import uuid
 from django.db.models import  Count
 from datetime import datetime
 import datetime
@@ -647,65 +649,82 @@ def add_medicine(request):
     user = None
     if request.user.is_pharmacist:
         user = Pharmacist.objects.get(user=request.user)
+    elif request.user.is_hospital_admin:
+        user = Admin_Information.objects.get(user=request.user)
 
     if request.method == 'POST':
+        # Get form data with proper validation
         name = request.POST.get('name', '').strip()
         weight = request.POST.get('weight', '').strip()
-        quantity = request.POST.get('quantity', '').strip()
-        price = request.POST.get('price', '').strip()
-        requirement_type = request.POST.get('requirement_type')
-        category_type = request.POST.get('category_type')
-        medicine_type = request.POST.get('medicine_type')
+        quantity_str = request.POST.get('quantity', '').strip()
+        price_str = request.POST.get('price', '').strip()
+        requirement_type = request.POST.get('requirement_type', '')
+        category_type = request.POST.get('category_type', '')
+        medicine_type = request.POST.get('medicine_type', '')
         description = request.POST.get('description', '').strip()
-        featured_image = request.FILES.get('featured_image', 'medicines/default.png')
+        featured_image = request.FILES.get('featured_image')
 
-        has_error = False
+        # Initialize error flag
+        errors = []
 
-        # Validation
+        # Validate required fields
         if not name:
-            messages.error(request, 'Medicine name is required.')
-            has_error = True
-
+            errors.append('Medicine name is required.')
+        
         if not weight:
-            messages.error(request, 'Weight is required.')
-            has_error = True
-        elif not weight.replace('.', '', 1).isdigit():
-            messages.error(request, 'Weight must be a number.')
-            has_error = True
+            errors.append('Weight is required.')
+        
+        # Validate quantity
+        try:
+            quantity = int(quantity_str)
+            if quantity < 0:
+                errors.append('Quantity must be a positive number.')
+        except (ValueError, TypeError):
+            errors.append('Quantity must be a valid number.')
+        
+        # Validate price
+        try:
+            price = float(price_str)
+            if price < 0:
+                errors.append('Price must be a positive number.')
+        except (ValueError, TypeError):
+            errors.append('Price must be a valid number.')
 
-        if not quantity:
-            messages.error(request, 'Quantity is required.')
-            has_error = True
-        elif not quantity.isdigit():
-            messages.error(request, 'Quantity must be a whole number.')
-            has_error = True
-
-        if not price:
-            messages.error(request, 'Price is required.')
-            has_error = True
-        elif not price.replace('.', '', 1).isdigit():
-            messages.error(request, 'Price must be a number.')
-            has_error = True
-
-        if has_error:
+        # If there are errors, return to form with messages
+        if errors:
+            for error in errors:
+                messages.error(request, error)
             return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
 
-        # Save if no errors
-        medicine = Medicine(
-            name=name,
-            weight=weight,
-            quantity=int(quantity),
-            price=float(price),
-            Prescription_reqiuired=requirement_type,
-            medicine_category=category_type,
-            medicine_type=medicine_type,
-            description=description,
-            featured_image=featured_image,
-            stock_quantity=80
-        )
-        medicine.save()
-        messages.success(request, 'Medicine added successfully!')
-        return redirect('medicine-list')
+        # Generate unique medicine ID
+        medicine_id = f"#M-{str(uuid.uuid4())[:8].upper()}"
+
+        try:
+            # Create medicine instance
+            medicine = Medicine(
+                name=name,
+                weight=weight,
+                quantity=quantity,
+                price=price,
+                Prescription_reqiuired=requirement_type,
+                medicine_category=category_type,
+                medicine_type=medicine_type,
+                description=description,
+                featured_image=featured_image or 'medicines/default.png',
+                stock_quantity=quantity,
+                medicine_id=medicine_id
+            )
+            
+            # Save to database
+            medicine.save()
+            
+            # Success message and redirect
+            messages.success(request, f'Medicine "{name}" added successfully!')
+            return redirect('medicine-list')
+            
+        except Exception as e:
+            messages.error(request, f'Error adding medicine: {str(e)}')
+            return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
 
     return render(request, 'hospital_admin/add-medicine.html', {'admin': user})
 
@@ -714,41 +733,32 @@ def add_medicine(request):
 def edit_medicine(request, pk):
     if request.user.is_pharmacist:
         user = Pharmacist.objects.get(user=request.user)
+    elif request.user.is_hospital_admin:
+        user = Admin_Information.objects.get(user=request.user)
+    
+    medicine = get_object_or_404(Medicine, serial_number=pk)
+    
+    if request.method == 'POST':
+        form = MedicineForm(request.POST, request.FILES, instance=medicine)
         
-        medicine = Medicine.objects.get(serial_number=pk)
-        old_medicine_image = medicine.featured_image
-        
-        if request.method == 'POST':
-            if 'featured_image' in request.FILES:
-                featured_image = request.FILES['featured_image']
-            else:
-                featured_image = old_medicine_image
-                name = request.POST.get('name')
-                Prescription_reqiuired = request.POST.get('requirement_type')     
-                weight = request.POST.get('weight') 
-                quantity = request.POST.get('quantity')
-                medicine_category = request.POST.get('category_type')
-                medicine_type = request.POST.get('medicine_type')
-                description = request.POST.get('description')
-                price = request.POST.get('price')
-                
-                medicine.name = name
-                medicine.Prescription_reqiuired = Prescription_reqiuired
-                medicine.weight = weight
-                medicine.quantity = quantity
-                medicine.medicine_category = medicine_category
-                medicine.medicine_type = medicine_type
-                medicine.description = description
-                medicine.price = price
-                medicine.featured_image = featured_image
-                medicine.stock_quantity = 80
-                #medicine.medicine_id = generate_random_medicine_ID()
-            
-                medicine.save()
-            
-                return redirect('medicine-list')
-   
-    return render(request, 'hospital_admin/edit-medicine.html',{'medicine': medicine,'admin': user})
+        if form.is_valid():
+            medicine = form.save(commit=False)
+            # Only update stock_quantity if it was explicitly provided in the form
+            # Otherwise, keep the existing stock_quantity value
+            if 'stock_quantity' in request.POST and request.POST['stock_quantity']:
+                try:
+                    medicine.stock_quantity = int(request.POST['stock_quantity'])
+                except ValueError:
+                    pass  # Keep existing value if conversion fails
+            medicine.save()
+            messages.success(request, f'Medicine "{medicine.name}" updated successfully!')
+            return redirect('medicine-list')
+        else:
+            messages.error(request, 'Please correct the errors below.')
+    else:
+        form = MedicineForm(instance=medicine)
+
+    return render(request, 'hospital_admin/edit-medicine.html', {'form': form, 'medicine': medicine, 'admin': user})
 
 
 @csrf_exempt
@@ -1093,6 +1103,17 @@ def pharmacist_dashboard(request):
             total_order_count = Order.objects.annotate(count=Count('orderitems'))
             total_cart_count = Cart.objects.annotate(count=Count('item'))
 
+            # Inventory levels for pie chart
+            low_stock_count = Medicine.objects.filter(stock_quantity__lt=15).count()
+            medium_stock_count = Medicine.objects.filter(stock_quantity__gte=15, stock_quantity__lte=100).count()
+            high_stock_count = Medicine.objects.filter(stock_quantity__gt=100).count()
+            
+            inventory_data = {
+                'low_stock': low_stock_count,
+                'medium_stock': medium_stock_count,
+                'high_stock': high_stock_count
+            }
+
             # Pagination for medicine list
             from django.core.paginator import Paginator
             medicine_list = Medicine.objects.all()
@@ -1104,7 +1125,8 @@ def pharmacist_dashboard(request):
                        'total_pharmacist_count':total_pharmacist_count, 
                        'total_medicine_count':total_medicine_count, 
                        'total_order_count':total_order_count,
-                       'total_cart_count':total_cart_count}
+                       'total_cart_count':total_cart_count,
+                       'inventory_data': inventory_data}
             return render(request, 'hospital_admin/pharmacist-dashboard.html',context)
 
 @csrf_exempt

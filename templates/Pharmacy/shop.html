@@ -329,9 +329,15 @@
                   </div>
                   <div>
                     <p class="product-price">{{ medicine.price }} Pesos</p>
+                    {% if medicine.quantity > 0 %}
                     <a href="{% url 'add-to-cart' pk=medicine.serial_number %}" class="btn btn-add-to-cart" aria-label="Add {{ medicine.name }} to cart">
                       Add to Cart
                     </a>
+                    {% else %}
+                    <button class="btn btn-add-to-cart" disabled style="opacity: 0.5; cursor: not-allowed;">
+                      Out of Stock
+                    </button>
+                    {% endif %}
                   </div>
                 </div>
               </div>
