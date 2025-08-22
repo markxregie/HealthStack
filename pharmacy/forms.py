@@ -1,4 +1,19 @@
-from django.forms import ModelForm
 from django import forms
-from django.contrib.auth.forms import UserCreationForm
-# from django.contrib.auth.models import User
+from .models import Medicine
+
+class MedicineForm(forms.ModelForm):
+    class Meta:
+        model = Medicine
+        fields = [
+            'name', 'weight', 'quantity', 'price', 'stock_quantity',
+            'Prescription_reqiuired', 'medicine_category', 'medicine_type',
+            'description', 'featured_image'
+        ]
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields['featured_image'].required = False
+        self.fields['featured_image'].widget.attrs.update({
+            'class': 'form-control',
+            'accept': 'image/*'
+        })

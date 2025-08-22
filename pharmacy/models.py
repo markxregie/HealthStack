@@ -109,11 +109,51 @@ class Order(models.Model):
 
     # Stock Calculation
     def stock_quantity_decrease(self):
+        """Decrease unit quantity for all items in this order with reset logic"""
+        from .utils import check_and_reset_medicine_quantity
+        
         for order_item in self.orderitems.all():
-            decrease_stock = order_item.item.stock_quantity - order_item.quantity
-            order_item.item.stock_quantity = decrease_stock
-            order_item.item.save()
-            return decrease_stock
+            medicine = order_item.item
+            required_quantity = order_item.quantity
+            
+            # Check current availability
+            if medicine.quantity < required_quantity:
+                # Try to reset if quantity is 0
+                was_reset, new_quantity, new_stock = check_and_reset_medicine_quantity(medicine)
+                
+                # If still insufficient after reset, raise error
+                if new_quantity < required_quantity:
+                    raise ValueError(
+                        f"Insufficient stock for {medicine.name}. "
+                        f"Available: {new_quantity}, Required: {required_quantity}"
+                    )
+            
+            # Now we have sufficient quantity, proceed with deduction
+            medicine.quantity -= required_quantity
+            medicine.save()
+            
+            # Check if we need another reset after deduction
+            if medicine.quantity <= 0:
+                check_and_reset_medicine_quantity(medicine)
+    
+    def check_stock_availability(self):
+        """Check if all items in the order have sufficient unit quantity with reset consideration"""
+        from .utils import check_and_reset_medicine_quantity
+        
+        for order_item in self.orderitems.all():
+            medicine = order_item.item
+            required_quantity = order_item.quantity
+            
+            # Check current availability
+            if medicine.quantity < required_quantity:
+                # Try to reset if quantity is 0
+                was_reset, new_quantity, new_stock = check_and_reset_medicine_quantity(medicine)
+                
+                # Check if we have enough after potential reset
+                if new_quantity < required_quantity:
+                    return False, medicine.name
+        
+        return True, None
 
     # TOTAL
     def final_bill(self):
