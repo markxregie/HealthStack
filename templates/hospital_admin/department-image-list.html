@@ -102,7 +102,7 @@
 												
 													<td class="text-center">
 														<div class="actions">
-															<a class="btn btn-sm bg-success-light" data-toggle="modal" data-target="#modal-default{{dep.hospital_department_name}}">
+															<a class="btn btn-sm bg-success-light" data-toggle="modal" data-target="#modal-default{{dep.hospital_department_id}}">
 																<i class="fe fe-pencil"></i> Edit
 															</a>
 															<a  data-toggle="modal" data-target="#delete_modal{{dep.hospital_department_id}}" class="btn btn-sm bg-danger-light">
@@ -114,7 +114,7 @@
 													
 												</tr>
 
-												<div class="modal fade" id="modal-default{{dep.hospital_department_name}}" aria-hidden="true" role="dialog">
+												<div class="modal fade" id="modal-default{{dep.hospital_department_id}}" aria-hidden="true" role="dialog">
 												<form action="{%url 'edit-department' pk=dep.hospital_department_id%}" method="POST"
 													enctype="multipart/form-data">
 													{% csrf_token %}
