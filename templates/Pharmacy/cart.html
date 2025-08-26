@@ -321,8 +321,8 @@
                         {% for cart in carts %}
                         <div class="cart-item-card">
                             <div class="cart-item-details">
-                                <h3>{{ cart.item.name }}</h3>
-                                <p>{{ cart.item.description }}</p>
+                            <h3>{{ cart.item.name }}</h3>
+                            <p>{{ cart.item.description }}</p>
                             </div>
                             <div class="quantity-selector">
                                 <a href="{% url 'decrease-item' pk=cart.item.pk %}">

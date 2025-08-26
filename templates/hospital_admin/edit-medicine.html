@@ -397,8 +397,9 @@
 																<table class="table table-hover table-center">
 																	<thead>
 																		<tr>
-																			<th style="min-width: 300px">Quantity</th>
-																			<th style="min-width: 300px">Price</th>
+																			<th style="min-width: 200px">Quantity</th>
+																			<th style="min-width: 200px">Price</th>
+																			<th style="min-width: 200px">Stock Qty</th>
 																		</tr>
 																	</thead>
 																	<tbody>
@@ -410,6 +411,10 @@
 																			<td>
 																				<input class="form-control" type="text"
 																					name="price" value="{{medicine.price}}" >
+																			</td>
+																			<td>
+																				<input class="form-control" type="text"
+																					name="stock_quantity" value="{{medicine.stock_quantity}}" >
 																			</td>
 																		</tr>
 																	</tbody>
@@ -433,50 +438,48 @@
 																			<td>
 																				<label for="cars">Prescriptions:
 																				</label>
-																				<select id="type" name="requirement_type" value="{{medicine.Prescription_reqiuired}}">
-																					<option value="yes">yes
+																				<select id="type" name="Prescription_reqiuired" value="{{medicine.Prescription_reqiuired}}">
+																					<option value="yes" {% if medicine.Prescription_reqiuired == 'yes' %}selected{% endif %}>yes
 																					</option>
-																					<option value="no">no
+																					<option value="no" {% if medicine.Prescription_reqiuired == 'no' %}selected{% endif %}>no
 																					</option>									
 																				</select>
 																			</td>
 																			<td>
 																				<label for="cars">Category:
 																				</label>
-																				<select id="type" name="category_type" value="{{medicine.medicine_category}}">
-																					<option value="fever">fever
+																				<select id="type" name="medicine_category" value="{{medicine.medicine_category}}">
+																					<option value="fever" {% if medicine.medicine_category == 'fever' %}selected{% endif %}>fever
 																					</option>
-																					<option value="pain">pain
+																					<option value="pain" {% if medicine.medicine_category == 'pain' %}selected{% endif %}>pain
 																					</option>
-																					<option value="cough">cough
+																					<option value="cough" {% if medicine.medicine_category == 'cough' %}selected{% endif %}>cough
 																					</option>
-																					<option value="cold">cold
+																					<option value="cold" {% if medicine.medicine_category == 'cold' %}selected{% endif %}>cold
 																					</option>
-																					<option value="flu">flu
+																					<option value="flu" {% if medicine.medicine_category == 'flu' %}selected{% endif %}>flu
 																					</option>
-																					<option value="Allergy">Allergy
+																					<option value="allergy" {% if medicine.medicine_category == 'allergy' %}selected{% endif %}>Allergy
 																					</option>
-																					<option value="Infection (Antibiotics)">Infection (Antibiotics)
+																					<option value="infection" {% if medicine.medicine_category == 'infection' %}selected{% endif %}>Infection (Antibiotics)
 																					</option>
-
+																					<option value="digestivehealth" {% if medicine.medicine_category == 'digestivehealth' %}selected{% endif %}>Stomach / Digestion
 																					</option>
-																					<option value="Stomach / Digestion">Stomach / Digestion
+																					<option value="bloodpressure" {% if medicine.medicine_category == 'bloodpressure' %}selected{% endif %}>Hypertension / Heart
 																					</option>
-																					<option value="Hypertension / Heart">Hypertension / Heart
+																					<option value="diabetes" {% if medicine.medicine_category == 'diabetes' %}selected{% endif %}>Diabetes
 																					</option>
-																					<option value="Diabetes">Diabetes
+																					<option value="skin" {% if medicine.medicine_category == 'skin' %}selected{% endif %}>Skin
 																					</option>
-																					<option value="Skin">Skin
+																					<option value="vitamins" {% if medicine.medicine_category == 'vitamins' %}selected{% endif %}>Vitamins & Supplements
 																					</option>
-																					<option value="Vitamins & Supplements">Vitamins & Supplements
+																					<option value="eye" {% if medicine.medicine_category == 'eye' %}selected{% endif %}>Eye / Ear / Nose
 																					</option>
-																					<option value="digestivEye / Ear / Noseehealth">Eye / Ear / Nose
+																					<option value="asthma" {% if medicine.medicine_category == 'asthma' %}selected{% endif %}>Respiratory (Asthma, Bronchitis)
 																					</option>
-																					<option value="Respiratory (Asthma, Bronchitis)">Respiratory (Asthma, Bronchitis)
+																					<option value="urinary" {% if medicine.medicine_category == 'urinary' %}selected{% endif %}>Urinary
 																					</option>
-																					<option value="Urinary">Urinary
-																					</option>
-																					<option value="First Aid">First Aid
+																					<option value="firstaid" {% if medicine.medicine_category == 'firstaid' %}selected{% endif %}>First Aid
 																					</option>
 																				</select>
 																			</td>

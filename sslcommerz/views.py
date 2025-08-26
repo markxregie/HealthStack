@@ -20,6 +20,7 @@ from hospital.models import Patient
 from pharmacy.models import Order, Cart
 from doctor.models import Appointment, Prescription, Prescription_test, testCart, testOrder 
 from django.contrib.auth.decorators import login_required
+from django.urls import reverse
 
 
 from django.core.mail import BadHeaderError, send_mail
@@ -435,40 +436,44 @@ def payment_testing(request, pk):
 PAYMONGO_SECRET_KEY_BASE64 = base64.b64encode(f"{settings.PAYMONGO_SECRET_KEY}:".encode()).decode()
 logger = logging.getLogger(__name__)
 
+@csrf_exempt
 def create_paymongo_appointment_payment(request, appointment_id):
     try:
         appointment = Appointment.objects.get(id=appointment_id)
-        amount = int(appointment.doctor.consultation_fee) * 100  # in cents
+        amount = int(appointment.doctor.consultation_fee) * 100  # centavos
 
         user = request.user
         name = f"{getattr(user, 'first_name', '')} {getattr(user, 'last_name', '')}".strip() or "Unknown"
         email = getattr(user, 'email', '')
         phone = getattr(user, 'phone_number', '')
 
+        # Auth header
         PAYMONGO_SECRET_KEY = settings.PAYMONGO_SECRET_KEY
         PAYMONGO_SECRET_KEY_BASE64 = base64.b64encode(f"{PAYMONGO_SECRET_KEY}:".encode()).decode()
 
         url = "https://api.paymongo.com/v1/checkout_sessions"
 
-        headers = {
-            "Authorization": f"Basic {PAYMONGO_SECRET_KEY_BASE64}",
-            "Content-Type": "application/json"
-        }
+        # ✅ Build dynamic redirect URLs
+        success_url = request.build_absolute_uri(
+            reverse("paymongo-payment-success", args=[appointment.id])
+        )
+        cancel_url = request.build_absolute_uri(
+            reverse("paymongo-payment-cancel")
+        )
 
         payload = {
             "data": {
                 "attributes": {
                     "amount": amount,
                     "currency": "PHP",
-                    "success_url": request.build_absolute_uri(f"/sslcommerz/paymongo/success/{appointment.id}/"),
-                    "cancel_url": request.build_absolute_uri("/sslcommerz/paymongo/cancel/"),
+                    "success_url": success_url,
+                    "cancel_url": cancel_url,
                     "payment_method_types": ["card"],
                     "billing": {
                         "name": name,
                         "email": email,
                         "phone": phone
                     },
-                    # line_items required by API
                     "line_items": [
                         {
                             "name": "Consultation Fee",
@@ -477,24 +482,24 @@ def create_paymongo_appointment_payment(request, appointment_id):
                             "quantity": 1
                         }
                     ],
-                    # 🔹 auto-capture for sandbox (auto-authorize)
                     "auto_capture": True
                 }
             }
         }
 
-        # log payload for debugging
         logger.info(f"PayMongo payload: {json.dumps(payload)}")
 
-        response = requests.post(url, headers=headers, data=json.dumps(payload))
+        response = requests.post(url, headers={
+            "Authorization": f"Basic {PAYMONGO_SECRET_KEY_BASE64}",
+            "Content-Type": "application/json"
+        }, data=json.dumps(payload))
+
         response.raise_for_status()
         data = response.json()
 
-        # Try multiple keys for checkout URL (sandbox sometimes varies)
         checkout_url = data["data"]["attributes"].get("checkout_url") or \
                        data["data"]["attributes"].get("payment_url", {}).get("redirect")
 
-        # Save PayMongo session ID
         appointment.paymongo_payment_id = data["data"]["id"]
         appointment.save()
 
@@ -502,13 +507,49 @@ def create_paymongo_appointment_payment(request, appointment_id):
 
     except Appointment.DoesNotExist:
         logger.error(f"Appointment with ID {appointment_id} does not exist.")
+        messages.error(request, "Appointment not found.")
         return redirect("patient-dashboard")
 
     except requests.exceptions.HTTPError as e:
         logger.error(f"Error creating PayMongo payment: {e}")
         logger.error(f"Response content: {response.text}")
+        messages.error(request, "Payment request failed. Please try again.")
         return redirect("patient-dashboard")
 
     except Exception as e:
         logger.exception(f"Unexpected error in PayMongo payment: {e}")
+        messages.error(request, "Unexpected error occurred. Please try again.")
         return redirect("patient-dashboard")
+
+
+# ✅ Success page
+def paymongo_payment_success(request, appointment_id):
+    try:
+        appointment = Appointment.objects.get(id=appointment_id)
+        appointment.is_paid = True
+        appointment.payment_status = "VALID"
+        appointment.save()
+        messages.success(request, "Payment successful! Your appointment is confirmed.")
+    except Appointment.DoesNotExist:
+        messages.error(request, "Appointment not found.")
+    return redirect("patient-dashboard")
+
+
+# ✅ Cancel page
+def paymongo_payment_cancel(request):
+    messages.warning(request, "Payment was cancelled.")
+    return redirect("patient-dashboard")
+    
+    from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib import messages
+from .models import Appointment
+
+def paymongo_payment_success(request, appointment_id):
+    appointment = get_object_or_404(Appointment, id=appointment_id)
+    
+    # Mark as paid
+    appointment.payment_status = "Paid"
+    appointment.save()
+
+    messages.success(request, f"Payment successful for appointment {appointment.id}")
+    return redirect('patient-dashboard')  # or wherever you want user to land
