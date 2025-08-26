@@ -67,7 +67,7 @@
 										<div class="col-md-6">
 											<div class="invoice-logo">
 												<img style="float: left;
-												width: 220px;"src="static/HealthStack-System/images/Normal/FullLogo_Transparent_NoBuffer.png" alt="logo">
+												width: 220px;"src="static/HealthStack-System/images/Normal/logo.png" alt="logo">
 											</div>
 										</div>
 										<div class="col-md-6" style="float: right;
@@ -118,9 +118,9 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="table-responsive">
-												<table class="invoice-table table table-bordered" style="text-align: center;border: 1px solid black">
+												<table class="invoice-table table table-bordered"  style="text-align: center;border: 1px solid black; ">
 													
-														<tr style="vertical-align: center;height: 50px;">
+														<tr style="vertical-align: center;height: 50px; background-color: rgb(149, 194, 112)">
 															<th>Specimen Information</th>
 															<th>Specimen ID</th>
 															<th>Collection Date/Time</th>
@@ -151,17 +151,17 @@
 									<div class="row">
 										<div class="col-md-12">
 											<div class="table-responsive">
-												<h2 class="text-center" style="margin-bottom: 4px;color:rgb(84, 147, 199);text-align: center;"><b>Test</b></h2>
+												<h2 class="text-center" style="margin-bottom: 4px;color: rgb(149, 194, 112);text-align: center;"><b>Test</b></h2>
 												<table class="invoice-table table table-bordered" style="border: 1px inset black">
 													
-														<tr style="background-color:rgb(84, 147, 199);vertical-align: center;height: 50px;">
+														<tr style="background-color: rgb(149, 194, 112);vertical-align: center;height: 50px;">
 															<th>Test Name</th>
                                      						<th class="text-center">Result</th>
 															<th class="text-center">Unit</th>
                               								<th class="text-center">Referred value</th>
 	
 														</tr>
-														<tr style="vertical-align: ;height: 30px;">
+														<tr style="vertical-align: middle;height: 30px; ">
 															{% for t in test %}
 														
 															<th class="text-center">{{t.test_name}}</th>
@@ -180,7 +180,7 @@
 									</div>
 								</div>
 								<div class="other-info">
-									<h2 class="text-center" style="margin-bottom: 4px;color:rgb(84, 147, 199);text-align: center;"><b>Other Information</b></h2>
+									<h2 class="text-center" style="margin-bottom: 4px;color: rgb(149, 194, 112);text-align: center;"><b>Other Information</b></h2>
 									<p>{{report.other_information}}</p>
                                   
 								</div>

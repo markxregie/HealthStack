@@ -1,7 +1,7 @@
 {% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
-  <!-- doccure/patient-profile.html  30 Nov 2019 04:12:09 GMT -->
   <head>
     <meta charset="utf-8" />
     <meta
@@ -10,20 +10,17 @@
     />
     <title>HealthStack</title>
 
-    <!-- Favicons -->
     <link
       type="image/x-icon"
       href="{% static 'HealthStack-System/images/Normal/favicon.png' %}"
       rel="icon"
     />
 
-    <!-- Bootstrap CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/css/Normal/bootstrap.min.css' %}"
     />
 
-    <!-- Fontawesome CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/plugins/Normal/fontawesome/css/fontawesome.min.css' %}"
@@ -33,27 +30,303 @@
       href="{% static 'HealthStack-System/plugins/Normal/fontawesome/css/all.min.css' %}"
     />
 
-    <!-- Main CSS -->
     <link
       rel="stylesheet"
       href="{% static 'HealthStack-System/css/Normal/style.css' %}"
     />
 
-    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!--[if lt IE 9]>
-      <script src="assets/js/html5shiv.min.js"></script>
-      <script src="assets/js/respond.min.js"></script>
-    <![endif]-->
-  </head>
+    <style>
+      :root {
+        --primary-color: #95c270;
+        --secondary-color: #495057;
+        --background-color: #f4f7f9;
+        --card-bg-color: #ffffff;
+        --border-color: #e0e6ed;
+        --font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      }
+
+      body {
+        font-family: var(--font-family);
+        background-color: var(--background-color);
+      }
+
+      .main-wrapper {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      .header,
+      .breadcrumb-bar,
+      .content,
+      .footer {
+        width: 100%;
+      }
+
+      .breadcrumb-bar {
+        background: var(--background-color);
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .breadcrumb-bar .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 0;
+      }
+
+      .breadcrumb-bar .breadcrumb-item a {
+        color: var(--secondary-color);
+        text-decoration: none;
+      }
+
+      .breadcrumb-bar .breadcrumb-item.active {
+        color: var(--primary-color);
+      }
+
+      .breadcrumb-title {
+        color: #333;
+        font-weight: 600;
+        margin-top: 5px;
+      }
+
+      .content {
+        padding: 30px 0;
+        flex: 1;
+      }
+
+      .card {
+        border: none;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+      }
+      .card-body {
+        margin-top: 5px;
+        margin-left: 10px;
+        margin-bottom: 5px;
+      }
+
+      .card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .card-header {
+        background-color: var(--card-bg-color);
+        border-bottom: 1px solid var(--border-color);
+        border-radius: 12px 12px 0 0;
+      }
+
+      .card-title {
+        font-weight: 600;
+        color: #333;
+      }
+
+      .widget-profile {
+        background: var(--card-bg-color);
+        text-align: center;
+      }
+
+      .pro-widget-content {
+        padding: 20px 0;
+        border-bottom: 1px solid var(--border-color);
+      }
+
+      .booking-doc-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        overflow: hidden;
+        border: 4px solid var(--primary-color);
+        display: block;
+        margin: 0 auto 15px;
+      }
+
+      .booking-doc-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .profile-det-info h3 {
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .profile-det-info .patient-details h5 {
+        color: var(--secondary-color);
+        font-weight: 400;
+        font-size: 14px;
+        margin-bottom: 5px;
+      }
+
+      .profile-det-info .patient-details i {
+        color: var(--primary-color);
+      }
+
+      .patient-info ul {
+        list-style: none;
+        padding: 0;
+        margin-top: 20px;
+      }
+
+      .patient-info li {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid var(--border-color);
+        font-size: 14px;
+      }
+
+      .patient-info li:last-child {
+        border-bottom: none;
+      }
+
+      .biller-info h4,
+      .billing-info h4 {
+        color: #333;
+        font-weight: 600;
+      }
+
+      .form-group label {
+        font-weight: 500;
+        color: var(--secondary-color);
+      }
+
+      .form-control {
+        border-radius: 8px;
+        border: 1px solid var(--border-color);
+        padding: 10px 15px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      }
+
+      .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.25rem rgba(149, 194, 112, 0.25);
+      }
+
+      .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+        color: #ffffff;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+      }
+
+      .btn-primary:hover {
+        background-color: #79a15f;
+        transform: translateY(-2px);
+      }
+
+      .add-more,
+      .trash {
+        color: var(--primary-color);
+        text-decoration: none;
+        font-weight: 500;
+        display: inline-block;
+        margin-top: 10px;
+        transition: color 0.3s ease;
+      }
+
+      .add-more:hover,
+      .trash:hover {
+        color: #79a15f !important;
+      }
+
+      .trash {
+        color: #dc3545 !important;
+      }
+
+      .trash:hover {
+        color: #f1efef !important;
+      }
+
+      .table {
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      .table thead th {
+        background-color: var(--primary-color);
+        color: #ffffff;
+        font-weight: 600;
+        border: none;
+      }
+
+      .table tbody td {
+        border-color: var(--border-color);
+      }
+
+      .submit-section {
+        text-align: right;
+        padding-top: 20px;
+      }
+          /* Breadcrumb Bar */
+    .breadcrumb-bar {
+      background: var(--primary-color);
+      padding: 1.2rem 1rem;
+      box-shadow: 0 3px 8px var(--shadow-light);
+      border-radius: 0 0 12px 12px;
+      margin-bottom: 1.5rem;
+    }
+    .breadcrumb-bar .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #e9f7cf;
+      font-size: 0.95rem;
+    }
+    .breadcrumb-bar .breadcrumb-item a {
+      color: #f0f6e9;
+      transition: color 0.3s ease;
+    }
+    .breadcrumb-bar .breadcrumb-item a:hover {
+      color: #d1e89b;
+      text-decoration: underline;
+    }
+    .breadcrumb-bar .breadcrumb-item.active {
+      color: #e9f7cf;
+      cursor: default;
+    }
+    .breadcrumb-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 2rem;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+      /* Responsive adjustments */
+      @media (max-width: 991px) {
+        .theiaStickySidebar {
+          position: static;
+          top: auto;
+          bottom: auto;
+          left: auto;
+          right: auto;
+          transform: none;
+        }
+      }
+
+      /* Animated icons and effects */
+      .fa-plus-circle,
+      .far.fa-trash-alt {
+        transition: transform 0.3s ease;
+      }
+
+      .add-more:hover .fa-plus-circle,
+      .trash:hover .far.fa-trash-alt {
+        transform: scale(1.1);
+      }
+    </style>
+
+    </head>
   <body>
-    <!-- Main Wrapper -->
     <div class="main-wrapper">
-       <!-- Header -->
-       <header class="header">{% include 'doctor-navbar.html' %}</header>
-       <!-- /Header -->
- 
-     
-      <!-- Breadcrumb -->
+      <header class="header">{% include 'doctor-navbar.html' %}</header>
       <div class="breadcrumb-bar">
         <div class="container-fluid">
           <div class="row align-items-center">
@@ -73,14 +346,12 @@
           </div>
         </div>
       </div>
-      <!-- /Breadcrumb -->
-
-      <!-- Page Content -->
       <div class="content">
         <div class="container-fluid">
           <div class="row">
-            <div class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar dct-dashbd-lft">
-              <!-- Profile Widget -->
+            <div
+              class="col-md-5 col-lg-4 col-xl-3 theiaStickySidebar dct-dashbd-lft"
+            >
               <div class="card widget-profile pat-widget-profile">
                 <div class="card-body">
                   <div class="pro-widget-content">
@@ -93,7 +364,6 @@
                       </a>
                       <div class="profile-det-info">
                         <h3><a href="#">{{patient.name}}</a></h3>
-
 
                         <div class="patient-details">
                           <h5><b>ID :</b> {{ patient.patient_id }}</h5>
@@ -115,191 +385,238 @@
                 </div>
               </div>
             </div>
-			<div class="col-md-7 col-lg-8 col-xl-9">
-				<div class="card">
-					<div class="card-header">
-						<h4 class="card-title mb-0">Add Prescription</h4>
-					</div>
-					<div class="card-body">
-						<div class="row">
-							<div class="col-sm-6">
-								<div class="biller-info">
-									<h4 class="d-block">{{doctor.name}}</h4>
-									<span class="d-block text-sm text-muted">{{doctor.department_name}}</span>
-									<span class="d-block text-sm text-muted">{{doctor.phone_number}}</span>
-									<span class="d-block text-sm text-muted">{{doctor.email}}</span>
-								</div>
-							</div>
-							<div class="col-sm-6 text-sm-right">
-								<div class="billing-info">
-          
-									<h4 class="d-block">{{current_date}}</h4>
-                  
-									<!-- <span class="d-block text-muted">#INV0001</span> -->
-								</div>
-							</div>
-						</div>
-						
-
-						
-						<!-- Prescription Item -->
-            <form action="#" method="POST" enctype="multipart/form-data">
-              {% csrf_token %}
-            <div class="card card-table">
-              <div class="card-body">
-                  <h4 class="card-title"><b>Medicine List</b></h4>
-                  <div class="medicine-info">
-                      <div class="row form-row medicine-cont">
-                  
-                          <div class="col-12 col-md-10 col-lg-11">
-                              <div class="row form-row">
-									
-										
-                            <div class="col-12 col-md-6 col-lg-3">
-                              <div class="form-group">
-                                  <label>Medicine Name</label>
-                                  <input type="text" class="form-control" name="medicine_name" id="medicine_name">
-                              </div> 
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              <div class="form-group">
-                                  <label>Quantity</label>
-                                  <input type="text" class="form-control" name="quantity" id="quantity">
-                              </div> 
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              <div class="form-group">
-                                  <label>Frequency</label>
-                                  <input type="text" class="form-control" name="frequency" id="frequency">
-                              </div> 
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-3">
-                              <div class="form-group">
-                                  <label>Relation with meal</label>
-                                  <input type="text" class="form-control" name="relation_with_meal" id="relation_with_meal">
-                              </div> 
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                              <div class="form-group">
-                                  <label>Duration</label>
-                                  <input type="text" class="form-control" name="duration" id="duration">
-                              </div> 
-                            </div>
-                            <div class="col-12 col-md-6 col-lg-6">
-                              <div class="form-group">
-                                  <label>Instruction</label>
-                                  <input type="text" class="form-control" name="instruction" id="instruction">
-                              </div> 
-                            </div>
-								
-                  </div>
-              </div>
-
-              <div class="col-12 col-md-2 col-lg-1"><label class="d-md-block d-sm-none d-none">&nbsp;</label><a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a></div>
-
-          </div>
-          
-          
-      </div>
-      <div class="add-more">
-          <a href="javascript:void(0);" class="add-medicine"><i class="fa fa-plus-circle"></i> Add Medicine</a>
-      </div>
-  </div>
-  </div>
-						<!-- Prescription Item -->
-						<!-- tests Item -->
-						<div class="card card-table">
-							<div class="card-body">
-                <h4 class="card-title"><b>Test List</b></h4>
-								<div class="test-info">
-                  <div class="row form-row test-cont">
-              
-                      <div class="col-12 col-md-10 col-lg-11">
-                          <div class="row form-row">
-
-                              <div class="col-12 col-md-5 col-lg-5">
-                                  <div class="form-group">
-                                      <label>Test Name</label>
-                                      <input type="text" class="form-control" name="test_name" id="test_name">
-                                  </div> 
-                              </div>
-
-
-                              <div class="col-12 col-md-6 col-lg-6">
-                                  <div class="form-group">
-                                      <label>Description</label>
-                                      <input type="text" class="form-control" name="description" id="description">
-                                  </div> 
-                              </div>
-
-                              <div class="col-12 col-md-1 col-lg-1">
-                                <div class="form-group">
-                                    <label>ID</label>
-                                    <input type="number" class="form-control" name="id" id="id">
-                                </div> 
-                              </div>
-
-                      </div>
-                  </div>
-
-                  <div class="col-12 col-md-2 col-lg-1"><label class="d-md-block d-sm-none d-none">&nbsp;</label><a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a></div>
-
-                  </div>
+            <div class="col-md-7 col-lg-8 col-xl-9">
+              <div class="card">
+                <div class="card-header">
+                  <h4 class="card-title mb-0">Add Prescription</h4>
                 </div>
-								<div class="add-more">
-									<a href="javascript:void(0);" class="add-test"><i class="fa fa-plus-circle"></i> Add Test</a>
-								</div>
-							</div>
-						</div>
-						<!-- /tests Item -->
-						<!-- /extra Item -->
-            <div class="card card-table">
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-hover table-center">
-                    <thead>
-                      <tr>
-                        <th style="min-width: 300px">Additional Information</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>
-                          <input class="form-control" type="text" name="extra_information" id="extra_information" >
-                        </td>
+                <div class="card-body">
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <div class="biller-info">
+                        <h4 class="d-block">{{doctor.name}}</h4>
+                        <span class="d-block text-sm text-muted"
+                          >{{doctor.department_name}}</span
+                        >
+                        <span class="d-block text-sm text-muted"
+                          >{{doctor.phone_number}}</span
+                        >
+                        <span class="d-block text-sm text-muted"
+                          >{{doctor.email}}</span
+                        >
+                      </div>
+                    </div>
+                    <div class="col-sm-6 text-sm-right">
+                      <div class="billing-info">
+                        <h4 class="d-block">{{current_date}}</h4>
+                        </div>
+                    </div>
+                  </div>
 
-                      </tr>
-                    </tbody>
-                  </table>
+                  <form action="#" method="POST" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card card-table">
+                      <div class="card-body">
+                        <h4 class="card-title"><b>Medicine List</b></h4>
+                        <div class="medicine-info">
+                          <div class="row form-row medicine-cont">
+                            <div class="col-12 col-md-10 col-lg-11">
+                              <div class="row form-row">
+                                <div class="col-12 col-md-6 col-lg-3">
+                                  <div class="form-group">
+                                    <label>Medicine Name</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="medicine_name"
+                                      id="medicine_name"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                  <div class="form-group">
+                                    <label>Quantity</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="quantity"
+                                      id="quantity"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                  <div class="form-group">
+                                    <label>Frequency</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="frequency"
+                                      id="frequency"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-3">
+                                  <div class="form-group">
+                                    <label>Relation with meal</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="relation_with_meal"
+                                      id="relation_with_meal"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-6">
+                                  <div class="form-group">
+                                    <label>Duration</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="duration"
+                                      id="duration"
+                                    />
+                                  </div>
+                                </div>
+                                <div class="col-12 col-md-6 col-lg-6">
+                                  <div class="form-group">
+                                    <label>Instruction</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="instruction"
+                                      id="instruction"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-12 col-md-2 col-lg-1">
+                              <label class="d-md-block d-sm-none d-none"
+                                >&nbsp;</label
+                              ><a href="#" class="trash"
+                                ><i class="far fa-trash-alt"></i
+                              ></a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="add-more">
+                          <a href="javascript:void(0);" class="add-medicine"
+                            ><i class="fa fa-plus-circle"></i> Add Medicine</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-table">
+                      <div class="card-body">
+                        <h4 class="card-title"><b>Test List</b></h4>
+                        <div class="test-info">
+                          <div class="row form-row test-cont">
+                            <div class="col-12 col-md-10 col-lg-11">
+                              <div class="row form-row">
+                                <div class="col-12 col-md-5 col-lg-5">
+                                  <div class="form-group">
+                                    <label>Test Name</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="test_name"
+                                      id="test_name"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-md-6 col-lg-6">
+                                  <div class="form-group">
+                                    <label>Description</label>
+                                    <input
+                                      type="text"
+                                      class="form-control"
+                                      name="description"
+                                      id="description"
+                                    />
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-md-1 col-lg-1">
+                                  <div class="form-group">
+                                    <label>ID</label>
+                                    <input
+                                      type="number"
+                                      class="form-control"
+                                      name="id"
+                                      id="id"
+                                    />
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-12 col-md-2 col-lg-1">
+                              <label class="d-md-block d-sm-none d-none"
+                                >&nbsp;</label
+                              ><a href="#" class="trash"
+                                ><i class="far fa-trash-alt"></i
+                              ></a>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="add-more">
+                          <a href="javascript:void(0);" class="add-test"
+                            ><i class="fa fa-plus-circle"></i> Add Test</a
+                          >
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card card-table">
+                      <div class="card-body">
+                        <div class="table-responsive">
+                          <table class="table table-hover table-center">
+                            <thead>
+                              <tr>
+                                <th style="min-width: 300px">
+                                  Additional Information
+                                </th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <tr>
+                                <td>
+                                  <input
+                                    class="form-control"
+                                    type="text"
+                                    name="extra_information"
+                                    id="extra_information"
+                                  />
+                                </td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="submit-section text-center">
+                          <button
+                            type="submit"
+                            class="btn btn-primary submit-btn"
+                          >
+                            Save
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
                 </div>
               </div>
             </div>
-
-						<!-- /extra Item -->
-						<div class="row">
-							<div class="col-md-12">
-							  <div class="submit-section">
-                  <button type="submit" class="btn btn-primary submit-btn">
-                  Save
-                  </button>
-                  
-                </div>
-							</div>
-						</div>
-						
           </div>
         </div>
       </div>
-    </form>
-      <!-- /Page Content -->
-
-      <!-- Footer -->
       {% include 'footer.html' %}
-      <!-- /Footer -->
-    </div>
-    <!-- /Main Wrapper -->
-
-    <!-- Add Medical Records Modal -->
+      </div>
     <div class="modal fade custom-modal" id="add_medical_records">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
@@ -349,37 +666,18 @@
         </div>
       </div>
     </div>
-    <!-- /Add Medical Records Modal -->
-
-    <!-- jQuery -->
     <script src="{% static 'HealthStack-System/js/Normal/jquery.min.js' %}"></script>
 
-    <!-- Bootstrap Core JS -->
     <script src="{% static 'HealthStack-System/js/Normal/popper.min.js' %}"></script>
     <script src="{% static 'HealthStack-System/js/Normal/bootstrap.min.js' %}"></script>
 
-    <!-- Slimscroll JS -->
     <script src="{% static 'HealthStack-System/plugins/admin/slimscroll/jquery.slimscroll.min.js' %}"></script>
 
-    <!-- Datetimepicker JS -->
-    <!-- <script src="{% static 'HealthStack-System/js/Normal/moment.min.js' %}"></script>
-    <script src="{% static 'HealthStack-System/js/Normal/bootstrap-datetimepicker.min.js' %}"></script> -->
-
-    <!-- Prescription Settings JS -->
     <script src="{% static 'HealthStack-System/js/Normal/prescription-settings.js' %}"></script>
 
-    	<!-- Datatables JS -->
-		<script src="{% static 'HealthStack-System/plugins/admin/datatables/jquery.dataTables.min.js'%}"></script> 
-		<script src="{% static 'HealthStack-System/plugins/admin/datatables/datatables.min.js'%}"></script>
+    <script src="{% static 'HealthStack-System/plugins/admin/datatables/jquery.dataTables.min.js'%}"></script>
+    <script src="{% static 'HealthStack-System/plugins/admin/datatables/datatables.min.js'%}"></script>
 
-    <!-- Sticky Sidebar JS -->
-    <!-- <script src="{% static 'HealthStack-System/plugins/Normal/theia-sticky-sidebar/ResizeSensor.js' %}"></script>
-    <script src="{% static 'HealthStack-System/plugins/Normal/theia-sticky-sidebar/theia-sticky-sidebar.js' %}"></script> -->
-
-    <!-- Custom JS -->
     <script src="{% static 'HealthStack-System/Outside_assets/js/script.js' %}"></script>
-	
   </body>
-
-  <!-- doccure/patient-profile.html  30 Nov 2019 04:12:13 GMT -->
-</html>
+  </html>
