@@ -537,9 +537,18 @@ def create_prescription(request,pk):
                     tests.test_name = test_name[i]
                     tests.test_description = test_description[i]
                     tests.test_info_id = test_info_id[i]
-                    test_info = Test_Information.objects.get(test_id=test_info_id[i])
-                    tests.test_info_price = test_info.test_price
-                   
+                    
+                    # Only get test info if test_info_id is not empty
+                    if test_info_id[i] and test_info_id[i].strip():  # Check if not empty or whitespace
+                        try:
+                            test_info = Test_Information.objects.get(test_id=test_info_id[i])
+                            tests.test_info_price = test_info.test_price
+                        except (Test_Information.DoesNotExist, ValueError):
+                            # If test info not found or invalid ID, set a default price or handle appropriately
+                            tests.test_info_price = "0.00"
+                    else:
+                        tests.test_info_price = "0.00"
+                    
                     tests.save()
 
                 messages.success(request, 'Prescription Created')

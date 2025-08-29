@@ -23,7 +23,114 @@
 		
 		<!-- Main CSS -->
         <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}"> 
-		
+		<style>
+        :root {
+            --primary-color: #95C270;
+            --hover-bg-color: #e6f0c8;
+            --danger-color: #E74C3C;
+            --text-color: #333;
+            --light-text: #777;
+            --border-color: #ddd;
+            --bg-light: #f0f6ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-color);
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 6px rgba(149, 194, 112, 0.3);
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            color: #fff;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #7da859;
+        }
+
+        .breadcrumb-bar, .page-header {
+            background: transparent;
+            padding: 15px 0;
+            margin-bottom: 20px;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+        }
+
+        .profile-header {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .profile-header img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border: 4px solid var(--primary-color);
+        }
+
+        .profile-user-info h4 {
+            margin-top: 10px;
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .profile-tab-cont .card-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .row > p {
+            font-weight: 500;
+        }
+
+        .tab-content {
+            margin-top: 20px;
+        }
+    </style>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>

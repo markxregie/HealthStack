@@ -210,13 +210,28 @@ def patient_register(request):
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)
 def patient_dashboard(request):
     if request.user.is_patient:
-        # patient = Patient.objects.get(user_id=pk)
         patient = Patient.objects.get(user=request.user)
         report = Report.objects.filter(patient=patient)
         prescription = Prescription.objects.filter(patient=patient).order_by('-prescription_id')
-        appointments = Appointment.objects.filter(patient=patient).filter(Q(appointment_status='pending') | Q(appointment_status='confirmed'))
-        payments = Payment.objects.filter(patient=patient).filter(appointment__in=appointments).filter(payment_type='appointment').filter(status='VALID')
-        context = {'patient': patient, 'appointments': appointments, 'payments': payments,'report':report,'prescription':prescription}
+        appointments = Appointment.objects.filter(
+            patient=patient
+        ).filter(Q(appointment_status='pending') | Q(appointment_status='confirmed'))
+
+        # Combine appointment and test payments
+        payments = Payment.objects.filter(
+            patient=patient
+        ).filter(
+            Q(payment_type='appointment', appointment__in=appointments, status='paid') |
+            Q(payment_type='test', test_order__isnull=False, status='paid')
+        ).order_by('-payment_id')  # sort by latest payment
+
+        context = {
+            'patient': patient,
+            'appointments': appointments,
+            'payments': payments,
+            'report': report,
+            'prescription': prescription,
+        }
     else:
         return redirect('logout')
         
@@ -507,8 +522,6 @@ def view_report(request,pk):
         redirect('logout') 
 
 
-def test_cart(request):
-    return render(request, 'test-cart.html')
 
 @csrf_exempt
 @login_required(login_url="login")
@@ -528,97 +541,94 @@ def test_single(request,pk):
 
 @csrf_exempt
 @login_required(login_url="login")
-def test_add_to_cart(request, pk, pk2):
+def test_add_to_cart(request, prescription_id, test_info_id):
     if request.user.is_authenticated and request.user.is_patient:
-         
+        # Get patient
         patient = Patient.objects.get(user=request.user)
-        test_information = Test_Information.objects.get(test_id=pk2)
-        prescription = Prescription.objects.filter(prescription_id=pk)
 
-        item = get_object_or_404(Prescription_test, test_info_id=pk2,prescription_id=pk)
-        order_item = testCart.objects.get_or_create(item=item, user=request.user, purchased=False)
+        # Get the Prescription_test item
+        item = get_object_or_404(Prescription_test, test_info_id=test_info_id, prescription_id=prescription_id)
+
+        # Create or get the testCart entry
+        cart_item, created = testCart.objects.get_or_create(
+            item=item,
+            user=request.user,
+            purchased=False
+        )
+
+        # Get or create an active testOrder for the user
         order_qs = testOrder.objects.filter(user=request.user, ordered=False)
-
         if order_qs.exists():
-            order = order_qs[0]
-            order.orderitems.add(order_item[0])
-            # messages.info(request, "This test is added to your cart!")
-            return redirect("prescription-view", pk=pk)
+            order = order_qs.first()
         else:
-            order = testOrder(user=request.user)
-            order.save()
-            order.orderitems.add(order_item[0])
-            return redirect("prescription-view", pk=pk)
+            order = testOrder.objects.create(user=request.user)
 
-        context = {'patient': patient,'prescription_test': prescription_tests,'prescription':prescription,'prescription_medicine':prescription_medicine,'test_information':test_information}
-        return render(request, 'prescription-view.html', context)
-    else:
-        logout(request)
-        messages.info(request, 'Not Authorized')
-        return render(request, 'patient-login.html')  
+        # Add cart item to order
+        order.orderitems.add(cart_item)
+
+        # Redirect back to prescription view
+        return redirect("prescription-view", pk=prescription_id)
+
+    logout(request)
+    messages.info(request, 'Not Authorized')
+    return redirect("patient-login")
 
 @csrf_exempt
 @login_required(login_url="login")
 def test_cart(request, pk):
     if request.user.is_authenticated and request.user.is_patient:
-        # prescription = Prescription.objects.filter(prescription_id=pk)
-        
         prescription = Prescription.objects.filter(prescription_id=pk)
-        
         patient = Patient.objects.get(user=request.user)
         prescription_test = Prescription_test.objects.all()
         test_carts = testCart.objects.filter(user=request.user, purchased=False)
         test_orders = testOrder.objects.filter(user=request.user, ordered=False)
-        
+
         if test_carts.exists() and test_orders.exists():
             test_order = test_orders[0]
             
-            context = {'test_carts': test_carts,'test_order': test_order, 'patient': patient, 'prescription_test':prescription_test, 'prescription_id':pk}
+            # Calculate total amount
+            total_amount = test_order.total_amount if hasattr(test_order, 'total_amount') else 0
+
+            context = {
+                'test_carts': test_carts,
+                'test_order': test_order,
+                'patient': patient,
+                'prescription_test': prescription_test,
+                'prescription_id': pk,
+                'total': total_amount,  # Add total to context
+            }
             return render(request, 'test-cart.html', context)
         else:
-            # messages.warning(request, "You don't have any test in your cart!")
-            context = {'patient': patient,'prescription_test':prescription_test}
+            context = {'patient': patient, 'prescription_test': prescription_test}
             return render(request, 'prescription-view.html', context)
     else:
         logout(request)
         messages.info(request, 'Not Authorized')
-        return render(request, 'patient-login.html') 
+        return render(request, 'patient-login.html')
 
 @csrf_exempt
 @login_required(login_url="login")
-def test_remove_cart(request, pk):
+def test_remove_cart(request, cart_id):
     if request.user.is_authenticated and request.user.is_patient:
-        item = Prescription_test.objects.get(test_id=pk)
+        # Get the testCart item by its ID
+        cart_item = get_object_or_404(testCart, id=cart_id, user=request.user, purchased=False)
 
-        patient = Patient.objects.get(user=request.user)
-        prescription = Prescription.objects.filter(prescription_id=pk)
-        prescription_medicine = Prescription_medicine.objects.filter(prescription__in=prescription)
-        prescription_test = Prescription_test.objects.filter(prescription__in=prescription)
-        test_carts = testCart.objects.filter(user=request.user, purchased=False)
-        
-        # item = get_object_or_404(test, pk=pk)
-        test_order_qs = testOrder.objects.filter(user=request.user, ordered=False)
-        if test_order_qs.exists():
-            test_order = test_order_qs[0]
-            if test_order.orderitems.filter(item=item).exists():
-                test_order_item = testCart.objects.filter(item=item, user=request.user, purchased=False)[0]
-                test_order.orderitems.remove(test_order_item)
-                test_order_item.delete()
-                # messages.warning(request, "This test was remove from your cart!")
-                context = {'test_carts': test_carts,'test_order': test_order,'patient': patient,'prescription_id':pk}
-                return render(request, 'test-cart.html', context)
-            else:
-                # messages.info(request, "This test was not in your cart")
-                context = {'patient': patient,'test': item,'prescription':prescription,'prescription_medicine':prescription_medicine,'prescription_test':prescription_test}
-                return render(request, 'prescription-view.html', context)
-        else:
-            # messages.info(request, "You don't have an active order")
-            context = {'patient': patient,'test': item,'prescription':prescription,'prescription_medicine':prescription_medicine,'prescription_test':prescription_test}
-            return redirect('prescription-view', pk=prescription.prescription_id)
-    else:
-        logout(request)
-        messages.info(request, 'Not Authorized')
-        return render(request, 'patient-login.html') 
+        # Remove from any active testOrder
+        order_qs = testOrder.objects.filter(user=request.user, ordered=False)
+        if order_qs.exists():
+            order = order_qs.first()
+            if order.orderitems.filter(id=cart_item.id).exists():
+                order.orderitems.remove(cart_item)
+
+        # Delete the cart item
+        cart_item.delete()
+
+        # Redirect back to test cart page
+        return redirect("test-cart", pk=cart_item.item.prescription.prescription_id)
+
+    logout(request)
+    messages.info(request, 'Not Authorized')
+    return redirect("patient-login") 
 
 @csrf_exempt
 def prescription_view(request,pk):

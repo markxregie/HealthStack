@@ -221,7 +221,6 @@ class testCart(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='test_cart')
     item = models.ForeignKey(Prescription_test, on_delete=models.CASCADE)
     name = models.CharField(default='test', max_length=200)
-    # quantity = models.IntegerField(default=1)
     purchased = models.BooleanField(default=False)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
@@ -229,13 +228,15 @@ class testCart(models.Model):
     def __str__(self):
         return f'{self.item.test_info_id} X {self.item.test_name}'
 
-    def get_total(self): 
-        total = self.item.test_info_price
-        
-        return total
+    @property
+    def total(self):
+        # Kung may string unit, tanggalin at gawing float
+        price_str = str(self.item.test_info_price)
+        price_numeric = price_str.split()[0]  # "233.0 Tk" -> "233.0"
+        return float(price_numeric)
+
 
 class testOrder(models.Model):
-    # id
     orderitems = models.ManyToManyField(testCart)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     ordered = models.BooleanField(default=False)
@@ -243,19 +244,15 @@ class testOrder(models.Model):
     payment_status = models.CharField(max_length=200, blank=True, null=True)
     trans_ID = models.CharField(max_length=200, blank=True, null=True)
 
-    # Subtotal
-    def get_totals(self):
-        total = 0 
-        for order_item in self.orderitems.all():
-            total += float(order_item.get_total())
-        return total
-    
-    # TOTAL
+    @property
+    def total_amount(self):
+        return sum(cart.total for cart in self.orderitems.all())
+
+    @property
     def final_bill(self):
-        vat= 20.00
-        Bill = self.get_totals()+ vat
-        float_Bill = format(Bill, '0.2f')
-        return float_Bill
+        vat = 20.00
+        return round(self.total_amount + vat, 2)
+
 
 class Doctor_review(models.Model):
     review_id = models.AutoField(primary_key=True)

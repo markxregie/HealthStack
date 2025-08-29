@@ -25,8 +25,110 @@
 		<link rel="stylesheet" href="{% static 'HealthStack-System/plugins/admin/datatables/datatables.min.css'%}"> 
 		
 		<!-- Main CSS -->
-        <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}"> 
-		
+        <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}">
+ <style> 
+        :root {
+            --primary-color: #95C270;
+            --hover-bg-color: #e6f0c8;
+            --danger-color: #E74C3C;
+            --text-color: #333;
+            --light-text: #777;
+            --border-color: #ddd;
+            --bg-light: #f0f6ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            padding: 10px;
+            transition: border 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 6px rgba(149, 194, 112, 0.3);
+            outline: none;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            color: #fff;
+            border-radius: 30px;
+            padding: 10px 25px;
+            font-weight: 600;
+            transition: background 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #7da859;
+        }
+
+        .breadcrumb-bar {
+            background: transparent;
+            padding: 15px 0;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .breadcrumb-title {
+            color: var(--primary-color);
+            font-weight: 700;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .table {
+            border-collapse: collapse !important;
+            width: 100%;
+            background: #fff;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px;
+        }
+
+        .table td {
+            padding: 12px;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .table-hover tbody tr:hover {
+            background: var(--hover-bg-color);
+        }
+    </style>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
