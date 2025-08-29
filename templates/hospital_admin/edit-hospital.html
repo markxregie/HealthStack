@@ -28,6 +28,145 @@
 
 	<!-- Main CSS -->
 	<link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}">
+		<style>
+    :root {
+        --primary-color: #95C270;   /* Green */
+        --hover-bg-color: #e6f0c8;  /* Light green hover */
+        --danger-color: #dc3545;    /* Bootstrap red */
+    }
+
+    /* ===== Table Styling ===== */
+    table.table {
+        border: 1px solid var(--primary-color);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    table.table thead th {
+        background-color: var(--primary-color);
+        color: #fff;
+        font-weight: 600;
+        text-align: left;
+        padding: 12px;
+    }
+
+    table.table tbody tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    table.table tbody tr:hover {
+        background-color: var(--hover-bg-color);
+    }
+
+    table.table td {
+        padding: 10px;
+        vertical-align: middle;
+    }
+
+    /* ===== Card Section Titles (Departments, Services, etc.) ===== */
+    .card .card-title {
+        background-color: var(--primary-color);
+        color: #fff;
+        padding: 10px 15px;
+        margin: -20px -20px 20px -20px; /* full width */
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        font-size: 16px;
+    }
+
+    /* ===== Form Labels ===== */
+    .card .form-group label {
+        color: var(--primary-color);
+        font-weight: 500;
+    }
+
+    /* ===== Input Fields ===== */
+    .form-control {
+        border: 1px solid var(--primary-color);
+        transition: 0.3s;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 4px var(--primary-color);
+        background-color: var(--hover-bg-color);
+    }
+
+    /* ===== Buttons ===== */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border-color: var(--primary-color);
+    }
+
+    .btn-primary:hover {
+        background-color: #7aad58;
+        border-color: #7aad58;
+    }
+
+    .btn-danger {
+        background-color: var(--danger-color);
+        border-color: var(--danger-color);
+        color: #fff;
+        visibility: visible !important; /* always visible */
+        opacity: 1 !important; /* no transparency */
+    }
+
+    .btn-danger:hover {
+        background-color: #b02a37;
+        border-color: #b02a37;
+    }
+
+    /* ===== Add More sections styled like mini-tables ===== */
+    .section-box {
+        border: 1px solid var(--primary-color);
+        border-radius: 8px;
+        margin-bottom: 20px;
+        padding: 15px;
+    }
+
+    .section-box h5 {
+        color: var(--primary-color);
+        font-weight: 600;
+        margin-bottom: 10px;
+    }
+
+    .section-box .row-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 8px 10px;
+        border-bottom: 1px solid #eee;
+    }
+
+    .section-box .row-item:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    .section-box .row-item:last-child {
+        border-bottom: none;
+    }
+
+    .section-box .row-item span {
+        font-weight: 500;
+        color: #333;
+    }
+
+    .section-box .row-item .btn-danger {
+        margin-left: 10px;
+    }
+
+    /* ===== Add More links ===== */
+    .add-more a {
+        color: var(--primary-color);
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .add-more a:hover {
+        text-decoration: underline;
+        color: #7aad58;
+    }
+</style>
 
 	<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>

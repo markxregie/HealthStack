@@ -26,7 +26,84 @@
 		
 		<!-- Main CSS -->
         <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}"> 
-		
+		<style> 
+			:root {
+			--primary-color: #95C270;   /* Green */
+			--primary-hover: #7eaa5c;   /* Darker Green */
+			--light-bg: #f9f9f9;        /* Light neutral background */
+			}
+
+			/* ===== BREADCRUMB BAR ===== */
+			.breadcrumb-bar {
+			background: transparent;     /* No background */
+			padding: 15px 20px;
+			border-radius: 0;
+			margin-bottom: 20px;
+			border-bottom: 1px solid #eee; /* subtle separator */
+			}
+			.breadcrumb .breadcrumb-item a {
+			color: #666;                /* subtle gray */
+			font-weight: 500;
+			}
+			.breadcrumb .breadcrumb-item.active {
+			color: var(--primary-color); /* highlight active step */
+			font-weight: 600;
+			}
+			.breadcrumb-title {
+			color: var(--primary-color);
+			font-weight: 700;
+			text-align: center;
+			margin-top: 10px;
+			}
+
+			/* ===== CARD ===== */
+			.card {
+			border-radius: 12px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+			border: none;
+			background: #fff;
+			}
+			.card-header {
+			background: #fff;
+			border-bottom: none;
+			text-align: center;
+			}
+
+			/* ===== FORM LABELS ===== */
+			.focus-label {
+			font-weight: 600;
+			color: var(--primary-hover);
+			display: block;
+			margin-bottom: 6px;
+			}
+
+			/* ===== FORM INPUTS ===== */
+			.form-control {
+			border-radius: 8px;
+			border: 1px solid #ccc;
+			padding: 10px;
+			transition: border-color 0.3s, box-shadow 0.3s;
+			}
+			.form-control:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 0.2rem rgba(149, 194, 112, 0.25);
+			}
+
+			/* ===== SUBMIT BUTTON ===== */
+			.submit-btn {
+			background: var(--primary-color);
+			border: none;
+			padding: 10px 25px;
+			font-weight: 600;
+			font-size: 16px;
+			border-radius: 30px;
+			transition: 0.3s;
+			}
+			.submit-btn:hover {
+			background: var(--primary-hover);
+			}
+
+		</style>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>

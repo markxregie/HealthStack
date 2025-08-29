@@ -288,14 +288,17 @@
                                             </h5>
 
                                             <h5>
-                                                {% if app.payment_status == 'pending' %}
-                                                <i class="fas fa-money-check-alt"></i> <span
-                                                    class="badge badge-pill bg-warning-light">Payment Status:
-                                                    Pending</span>
-                                                {% endif %}
-                                                {% if app.payment_status == 'VALID' %}
-                                                <i class="fas fa-money-check-alt"></i> <span
-                                                    class="badge badge-pill bg-success-light">Payment Status: Paid</span>
+                                                <i class="fas fa-money-check-alt"></i> 
+                                                {% if app.payment_status|lower == 'pending' %}
+                                                <span class="badge badge-pill bg-warning-light">Payment Status: Pending</span>
+                                                {% elif app.payment_status|lower == 'valid' or app.payment_status|lower == 'paid' %}
+                                                <span class="badge badge-pill bg-success-light">Payment Status: Paid</span>
+                                                {% elif app.payment_status|lower == 'failed' %}
+                                                <span class="badge badge-pill bg-danger-light">Payment Status: Failed</span>
+                                                {% elif app.payment_status|lower == 'cancelled' %}
+                                                <span class="badge badge-pill bg-danger-light">Payment Status: Cancelled</span>
+                                                {% else %}
+                                                <span class="badge badge-pill bg-secondary-light">Payment Status: {{ app.payment_status|default:"Unknown" }}</span>
                                                 {% endif %}
                                             </h5>
                                             <h5 class="mb-0">

@@ -26,7 +26,78 @@
 		
 		<!-- Main CSS -->
         <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}"> 
-		
+		<style> 
+			:root {
+				--primary-color: #95C270;   /* Main Green */
+				--primary-hover: #7eaa5c;   /* Darker Green */
+				--light-bg: #e6f0c8;        /* Light green */
+				--danger-color: #dc3545;    /* Red */
+				--danger-hover: #b52a38;    /* Darker red */
+				--text-dark: #333;
+				}
+
+				/* Page Title & Breadcrumb */
+				.page-title {
+				color: var(--primary-color);
+				font-weight: 600;
+				}
+				.breadcrumb .breadcrumb-item.active {
+				color: var(--primary-hover);
+				}
+				.breadcrumb a {
+				color: var(--primary-color);
+				}
+				.breadcrumb a:hover {
+				color: var(--primary-hover);
+				}
+
+				/* Card */
+				.card {
+				border-radius: 12px;
+				box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+				border: none;
+				}
+				.card-body {
+				padding: 20px;
+				}
+
+				/* Table */
+				.table thead th {
+				background-color: var(--primary-color);
+				color: #fff;
+				border: none;
+				}
+				.table tbody tr:hover {
+				background-color: var(--light-bg);
+				transition: 0.3s;
+				}
+				.table td, .table th {
+				vertical-align: middle;
+				}
+
+				/* Avatar */
+				.table-avatar a {
+				color: var(--primary-color);
+				font-weight: 500;
+				}
+				.table-avatar a:hover {
+				color: var(--primary-hover);
+				text-decoration: underline;
+				}
+
+				/* Edit Button */
+				.btn-primary {
+				background: var(--primary-color) !important;
+				border: none !important;
+				border-radius: 6px;
+				padding: 6px 14px;
+				transition: 0.3s;
+				}
+				.btn-primary:hover {
+				background: var(--primary-hover) !important;
+				}
+
+		</style>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
