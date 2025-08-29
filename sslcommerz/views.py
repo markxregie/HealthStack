@@ -27,6 +27,7 @@ from django.core.mail import BadHeaderError, send_mail
 from django.template.loader import render_to_string
 from django.http import HttpResponse
 from django.utils.html import strip_tags
+from django.utils import timezone
 
 
 # from .models import Patient, User
@@ -228,73 +229,151 @@ def ssl_payment_request_medicine(request, pk, id):
 
 
 @csrf_exempt
-def ssl_payment_request_test(request, pk, id, pk2):
-    # Payment Request for test payment
-    
-    patient = Patient.objects.get(patient_id=pk)
-    test_order = testOrder.objects.get(id=id)
-    prescription = Prescription.objects.get(prescription_id=pk2)
-    
-    invoice_number = generate_random_invoice()
-    
-    post_body = {}
-    post_body['total_amount'] = test_order.final_bill()
-    post_body['currency'] = "BDT"
-    post_body['tran_id'] = generate_random_string()
+def paymongo_test_payment_request(request, pk, id, pk2):
+    try:
+        # patient_id = id (from URL)
+        patient = Patient.objects.get(pk=id)
+        # test_order_id = pk2 (from URL)
+        test_order = testOrder.objects.get(id=pk2)
+        # prescription_id = pk (from URL)
+        prescription = Prescription.objects.get(prescription_id=pk)
 
-    post_body['success_url'] = request.build_absolute_uri(
-        reverse('ssl-payment-success'))
-    post_body['fail_url'] = request.build_absolute_uri(
-        reverse('ssl-payment-fail'))
-    post_body['cancel_url'] = request.build_absolute_uri(
-        reverse('ssl-payment-cancel'))
+        # 🚨 Prevent duplicate payment
+        if test_order.payment_status == "paid":
+            messages.warning(request, "This test order is already paid.")
+            return redirect("patient-dashboard")
 
-    post_body['emi_option'] = 0
-  
-    post_body['cus_name'] = patient.username
-    post_body['cus_email'] = patient.email
-    post_body['cus_phone'] = patient.phone_number
-    post_body['cus_add1'] = patient.address
-    post_body['cus_city'] = "Dhaka"
-    post_body['cus_country'] = "Bangladesh"
-    post_body['shipping_method'] = "NO"
-    # post_body['multi_card_name'] = ""
-    post_body['num_of_item'] = 1
-    post_body['product_name'] = "Test"
-    post_body['product_category'] = "Test Category"
-    post_body['product_profile'] = "general"
+        invoice_number = generate_random_invoice()
 
-    # Save in database
-    test_order.trans_ID = post_body['tran_id']
-    test_order.save()
-    
-    payment = Payment()
-    # payment.patient_id = patient.patient_id
-    # payment.appointment_id = appointment.id
-    payment.patient = patient
-    # payment.appointment = appointment
-    payment.name = post_body['cus_name']
-    payment.email = post_body['cus_email']
-    payment.phone = post_body['cus_phone']
-    payment.address = post_body['cus_add1']
-    payment.city = post_body['cus_city']
-    payment.country = post_body['cus_country']
-    payment.transaction_id = post_body['tran_id']
-    payment.prescription = prescription
-    
-    # payment.consulation_fee = appointment.doctor.consultation_fee
-    # payment.report_fee = appointment.doctor.report_fee
-    payment.invoice_number = invoice_number
-    
-    payment_type = "test"
-    payment.payment_type = payment_type
-    payment.save()
-    
-    
-    response = sslcz.createSession(post_body)  # API response
-    print(response)
+        # Save transaction ID sa test order
+        tran_id = generate_random_string()
+        test_order.trans_ID = tran_id
+        test_order.save()
 
-    return redirect(response['GatewayPageURL'])    
+        # Gumawa din ng Payment record
+        payment = Payment()
+        payment.patient = patient
+        payment.name = patient.username
+        payment.email = patient.email
+        payment.phone = patient.phone_number
+        payment.address = patient.address
+        payment.city = "QC"
+        payment.country = "Philippines"
+        payment.transaction_id = tran_id
+        payment.prescription = prescription
+        payment.test_order = test_order   # 🔑 important para matrack
+        payment.invoice_number = invoice_number
+        payment.payment_type = "test"
+        payment.payment_status = "pending"
+        payment.save()
+
+        # PayMongo checkout API
+        secret_key = settings.PAYMONGO_SECRET_KEY
+        auth_header = base64.b64encode(f"{secret_key}:".encode()).decode()
+
+        headers = {
+            "accept": "application/json",
+            "authorization": f"Basic {auth_header}",
+            "content-type": "application/json"
+        }
+
+        data = {
+            "data": {
+                "attributes": {
+                    "line_items": [
+                        {
+                            "name": f"Test Order #{test_order.id}",
+                            "quantity": 1,
+                            "currency": "PHP",
+                            "amount": int(float(test_order.final_bill()) * 100),
+                        }
+                    ],
+                    "payment_method_types": ["card"],
+                    "success_url": request.build_absolute_uri(
+                        reverse('paymongo-test-success', args=[test_order.id])
+                    ),
+                    "cancel_url": request.build_absolute_uri(
+                        reverse('paymongo-test-failed', args=[test_order.id])
+                    ),
+                    "description": f"Payment for Test Order #{test_order.id}"
+                }
+            }
+        }
+
+        response = requests.post(
+            "https://api.paymongo.com/v1/checkout_sessions",
+            headers=headers,
+            json=data
+        ).json()
+
+        checkout_url = response["data"]["attributes"]["checkout_url"]
+        return redirect(checkout_url)
+
+    except Exception as e:
+        print("PAYMONGO TEST ERROR:", e)
+        messages.error(request, f"Payment error: {e}")
+        return redirect("patient-dashboard")
+    
+@csrf_exempt
+def paymongo_test_success(request, testorder_id):
+    try:
+        test_order = testOrder.objects.get(id=testorder_id)
+
+        # Kunin yung payment record na naka-link dito
+        payment = Payment.objects.filter(test_order=test_order).last()
+
+        if payment:
+            payment.status = "paid"
+            payment.payment_status = "paid"
+            payment.transaction_date = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+            payment.save()
+
+        # Update din sa test order
+        test_order.payment_status = "paid"
+        test_order.save()
+
+        messages.success(request, "Test payment successful! Transaction has been recorded.")
+        return redirect("patient-dashboard")
+
+    except testOrder.DoesNotExist:
+        messages.error(request, "Test Order not found.")
+        return redirect("patient-dashboard")
+
+    except Exception as e:
+        print("PAYMONGO TEST SUCCESS ERROR:", e)
+        messages.error(request, f"Error updating payment: {e}")
+        return redirect("patient-dashboard")
+
+
+@csrf_exempt
+def paymongo_test_failed(request, testorder_id):
+    try:
+        test_order = testOrder.objects.get(id=testorder_id)
+
+        # Kunin yung payment record na naka-link dito
+        payment = Payment.objects.filter(test_order=test_order).last()
+
+        if payment:
+            payment.status = "failed"
+            payment.payment_status = "failed"
+            payment.transaction_date = timezone.now().strftime("%Y-%m-%d %H:%M:%S")
+            payment.save()
+
+        # Update din sa test order
+        test_order.payment_status = "failed"
+        test_order.save()
+
+        messages.error(request, "Test payment failed or was cancelled.")
+        return redirect("patient-dashboard")
+
+    except testOrder.DoesNotExist:
+        messages.error(request, "Test Order not found.")
+        return redirect("patient-dashboard")
+
+    except Exception as e:
+        print("PAYMONGO TEST FAILED ERROR:", e)
+        messages.error(request, f"Error updating payment: {e}")
+        return redirect("patient-dashboard")
 
 @csrf_exempt
 def ssl_payment_success(request):
