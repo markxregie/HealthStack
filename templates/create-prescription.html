@@ -494,7 +494,7 @@
                             <div class="col-12 col-md-2 col-lg-1">
                               <label class="d-md-block d-sm-none d-none"
                                 >&nbsp;</label
-                              ><a href="#" class="trash"
+                              ><a href="#" class="btn btn-danger trash"
                                 ><i class="far fa-trash-alt"></i
                               ></a>
                             </div>
@@ -517,12 +517,16 @@
                                 <div class="col-12 col-md-5 col-lg-5">
                                   <div class="form-group">
                                     <label>Test Name</label>
-                                    <input
-                                      type="text"
-                                      class="form-control"
+                                    <select
+                                      class="form-control test-name-select"
                                       name="test_name"
-                                      id="test_name"
-                                    />
+                                      onchange="updateTestId(this)"
+                                    >
+                                      <option value="">Select Test</option>
+                                      {% for test in test_names %}
+                                      <option value="{{ test.test_id }}" data-test-id="{{ test.test_id }}">{{ test.test_name }}</option>
+                                      {% endfor %}
+                                    </select>
                                   </div>
                                 </div>
 
@@ -543,9 +547,9 @@
                                     <label>ID</label>
                                     <input
                                       type="number"
-                                      class="form-control"
+                                      class="form-control test-id-input"
                                       name="id"
-                                      id="id"
+                                      readonly
                                     />
                                   </div>
                                 </div>
@@ -555,7 +559,7 @@
                             <div class="col-12 col-md-2 col-lg-1">
                               <label class="d-md-block d-sm-none d-none"
                                 >&nbsp;</label
-                              ><a href="#" class="trash"
+                              ><a href="#" class="btn btn-danger trash"
                                 ><i class="far fa-trash-alt"></i
                               ></a>
                             </div>
@@ -679,5 +683,44 @@
     <script src="{% static 'HealthStack-System/plugins/admin/datatables/datatables.min.js'%}"></script>
 
     <script src="{% static 'HealthStack-System/Outside_assets/js/script.js' %}"></script>
+    
+    <!-- Hidden element to store test data -->
+    <script id="test-data" type="application/json">
+    [
+      {% for test in test_names %}
+      {"test_id": "{{ test.test_id }}", "test_name": "{{ test.test_name }}"}
+      {% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ]
+    </script>
+    
+    <script>
+      // Store test data in JavaScript array
+      const testData = JSON.parse(document.getElementById('test-data').textContent);
+
+      function updateTestId(selectElement) {
+        // Get the selected option
+        const selectedOption = selectElement.options[selectElement.selectedIndex];
+        // Get the test ID from data attribute
+        const testId = selectedOption.getAttribute('data-test-id');
+        // Find the closest test container
+        const testContainer = selectElement.closest('.test-cont');
+        // Find the ID input field within this container
+        const idInput = testContainer.querySelector('.test-id-input');
+        // Set the value
+        if (idInput && testId) {
+          idInput.value = testId;
+        }
+      }
+
+      // Function to generate test dropdown options
+      function generateTestOptions() {
+        let options = '<option value="">Select Test</option>';
+        testData.forEach(test => {
+          options += `<option value="${test.test_id}" data-test-id="${test.test_id}">${test.test_name}</option>`;
+        });
+        return options;
+      }
+    </script>
   </body>
   </html>
