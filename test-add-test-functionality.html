@@ -6,115 +6,137 @@
     <title>Test Add Test Functionality</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        .test-info-container { margin: 20px 0; }
-        .test-cont { margin-bottom: 10px; padding: 10px; border: 1px solid #ccc; }
-        .add-more a { color: blue; cursor: pointer; }
+        .test-cont {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .trash {
+            color: red;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
     <h1>Test Add Test Functionality</h1>
     
-    <div class="test-info-container">
+    <div class="test-info">
         <div class="row form-row test-cont">
-            <div class="col-12 col-md-3">
-                <div class="form-group">
-                    <label>Test Name</label>
-                    <select class="form-control test-list-select" name="test_name" required>
-                        <option value="">Select Test Name</option>
-                        <option value="Blood Test">Blood Test</option>
-                        <option value="Urine Test">Urine Test</option>
-                    </select>
+            <div class="col-12 col-md-10 col-lg-11">
+                <div class="row form-row">
+                    <div class="col-12 col-md-5 col-lg-5">
+                        <div class="form-group">
+                            <label>Test Name</label>
+                            <select class="form-control test-name-select" name="test_name" onchange="updateTestId(this)">
+                                <option value="">Select Test</option>
+                                <option value="1" data-test-id="1">Blood Test</option>
+                                <option value="2" data-test-id="2">Urine Test</option>
+                                <option value="3" data-test-id="3">X-Ray</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-6 col-lg-6">
+                        <div class="form-group">
+                            <label>Description</label>
+                            <input type="text" name="description" class="form-control">
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-1 col-lg-1">
+                        <div class="form-group">
+                            <label>ID</label>
+                            <input type="number" name="id" class="form-control test-id-input" readonly>
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div class="col-12 col-md-3">
-                <div class="form-group">
-                    <label>Result</label>
-                    <input type="text" name="result" class="form-control" required>
-                </div>
-            </div>
-            <div class="col-12 col-md-2">
-                <div class="form-group">
-                   极 <label>Unit</label>
-                    <input type="text" name="unit" class="form-control">
-                </div>
-            </div>
-            <div class="col-12 col-md-3">
-                <div class="form-group">
-                    <label>Referred Value</label>
-                    <input type="text" name="referred_value" class="form-control">
-                </div>
-            </div>
-            <div class="col-12 col-md-1">
-                <div class="form-group d-flex align-items-end" style="height: 100%;">
-                    <a href="#" class="btn btn-danger trash remove-test d-flex align-items-center justify-content-center" style="width: 100%;">
-                        <i class="far fa-trash-alt">X</i>
-                    </a>
-                </div>
+            <div class="col-12 col-md-2 col-lg-1">
+                <label class="d-md-block d-sm-none d-none">&nbsp;</label>
+                <a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a>
             </div>
         </div>
     </div>
     
     <div class="add-more">
-        <a href="javascript:void(0);" class="add-test">+ Add Test</a>
+        <a href="javascript:void(0);" class="add-test">
+            <i class="fa fa-plus-circle"></i> Add Test
+        </a>
     </div>
 
     <script>
-        // Simplified version of the add-test functionality
-        $(document).on('click', '.add-test', function(e) {
-            e.preventDefault();
-            console.log("Add Test button clicked");
-            
-            var testHtml = `
-                <div class="row form-row test-cont">
-                    <div class="col-12 col-md-3">
-                        <div class="form-group">
-                            <label>Test Name</label>
-                            <select class="form-control test-list-select" name="test_name" required>
-                                <option value="">Select Test Name</option>
-                                <option value="Blood Test">Blood Test</option>
-                                <option value="Urine Test">Urine Test</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <div class="form-group">
-                            <label>Result极</label>
-                            <input type="text" name="result" class="form-control" required>
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-2">
-                        <div class="form-group">
-                            <label>Unit</label>
-                            <input type="text" name="unit" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-3">
-                        <div class="form-group">
-                            <label>Referred Value</label>
-                            <input type="text" name="referred_value" class="form-control">
-                        </div>
-                    </div>
-                    <div class="col-12 col-md-1">
-                        <div class="form-group d-flex align-items-end" style="height: 100%;">
-                            <a href="#" class="btn btn-danger trash remove-test d-flex align-items-center justify-content-center" style="width: 100%;">
-                                <i class="far fa-trash-alt">X</i>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            $('.test-info-container').append(testHtml);
-            console.log("New test form added");
+        // Mock test data
+        const testData = [
+            {test_id: "1", test_name: "Blood Test"},
+            {test_id: "2", test_name: "Urine Test"},
+            {test_id: "3", test_name: "X-Ray"},
+            {test_id: "4", test_name: "MRI Scan"},
+            {test_id: "5", test_name: "CT Scan"}
+        ];
+
+        // Test Add More functionality
+        $(".test-info").on('click','.trash', function () {
+            $(this).closest('.test-cont').remove();
+            return false;
         });
 
-        // Remove Test functionality
-        $(document).on('click', '.remove-test', function(e) {
-            e.preventDefault();
-            if (confirm('Are you sure you want to delete this test?')) {
-                $(this).closest('.test-cont').remove();
+        $(".add-test").on('click', function () {  
+            
+            // Generate test options directly from testData
+            var testOptions = '<option value="">Select Test</option>';
+            if (typeof testData !== 'undefined' && testData.length > 0) {
+                testData.forEach(function(test) {
+                    testOptions += '<option value="' + test.test_id + '" data-test-id="' + test.test_id + '">' + test.test_name + '</option>';
+                });
             }
+            
+            var testcontent = '<div class="row form-row test-cont">' +
+                '<div class="col-12 col-md-10 col-lg-11">' +
+                    '<div class="row form-row">' +
+                        '<div class="col-12 col-md-5 col-lg-5">' +
+                            '<div class="form-group">' +
+                                '<label>Test Name</label>' +
+                                '<select class="form-control test-name-select" name="test_name" onchange="updateTestId(this)">' +
+                                    testOptions +
+                                '</select>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="col-12 col-md-6 col-lg-6">' +
+                            '<div class="form-group">' +
+                                '<label>Description</label>' +
+                                '<input type="text" name="description" class="form-control">' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="col-12 col-md-1 col-lg-1">' +
+                            '<div class="form-group">' +
+                                '<label>ID</label>' +
+                                '<input type="number" name="id" class="form-control test-id-input" readonly>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>' +
+                '<div class="col-12 col-md-2 col-lg-1"><label class="d-md-block d-sm-none d-none">&nbsp;</label><a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a></div>' +
+            '</div>';
+            
+            $(".test-info").append(testcontent);
+            return false;
         });
+
+        // Make updateTestId function globally available
+        window.updateTestId = function(selectElement) {
+            // Get the selected option
+            const selectedOption = selectElement.options[selectElement.selectedIndex];
+            // Get the test ID from data attribute
+            const testId = selectedOption.getAttribute('data-test-id');
+            // Find the closest test container
+            const testContainer = selectElement.closest('.test-cont');
+            // Find the ID input field within this container
+            const idInput = testContainer.querySelector('.test-id-input');
+            // Set the value
+            if (idInput && testId) {
+                idInput.value = testId;
+            } else if (idInput) {
+                idInput.value = '';
+            }
+        };
     </script>
 </body>
 </html>

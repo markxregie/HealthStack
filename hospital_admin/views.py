@@ -1260,3 +1260,50 @@ def specimen_count_data(request):
     else:
         return JsonResponse({'error': 'Unauthorized'}, status=403)
 
+
+@csrf_exempt
+@login_required(login_url='admin_login')
+def test_count_data(request):
+    """Return JSON data with test counts for chart visualization"""
+    if request.user.is_labworker:
+        # Get all distinct test names from Test_Information
+        test_names = Test_Information.objects.values_list('test_name', flat=True).distinct().order_by('test_name')
+        
+        # Get limit parameter from request to limit number of bars shown
+        try:
+            limit = int(request.GET.get('limit', 8))
+        except ValueError:
+            limit = 8
+        
+        # Get offset parameter for pagination
+        try:
+            offset = int(request.GET.get('offset', 0))
+        except ValueError:
+            offset = 0
+        
+        # Get paginated test names
+        paginated_test_names = list(test_names[offset:offset + limit])
+        
+        # Count occurrences of each test in Prescription_test and Test models
+        test_counts = []
+        for test_name in paginated_test_names:
+            # Count in Prescription_test
+            prescription_count = Prescription_test.objects.filter(test_name=test_name).count()
+            # Count in Test model
+            test_model_count = Test.objects.filter(test_name=test_name).count()
+            total_count = prescription_count + test_model_count
+            test_counts.append(total_count)
+        
+        # Get total count of distinct test names for pagination
+        total_test_names = test_names.count()
+        
+        return JsonResponse({
+            'labels': paginated_test_names,
+            'data': test_counts,
+            'limit': limit,
+            'offset': offset,
+            'total_test_names': total_test_names
+        })
+    else:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+
