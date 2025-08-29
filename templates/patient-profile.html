@@ -44,6 +44,268 @@
       <script src="assets/js/html5shiv.min.js"></script>
       <script src="assets/js/respond.min.js"></script>
     <![endif]-->
+    <style>
+    /* Root variables */
+    :root {
+      --primary-green: #95C270;
+      --primary-green-dark: #7ab34f;
+      --text-dark: #333;
+      --text-muted: #666;
+      --bg-light: #fff;
+      --border-light: #eaeaea;
+      --shadow-light: rgba(0, 0, 0, 0.05);
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #f9fafb;
+      color: var(--text-dark);
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Breadcrumb Bar */
+    .breadcrumb-bar {
+      background: var(--primary-green);
+      padding: 1.2rem 1rem;
+      box-shadow: 0 3px 8px var(--shadow-light);
+      border-radius: 0 0 12px 12px;
+      margin-bottom: 1.5rem;
+    }
+    .breadcrumb-bar .breadcrumb {
+      background: transparent;
+      padding: 0;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+      color: #e9f7cf;
+      font-size: 0.95rem;
+    }
+    .breadcrumb-bar .breadcrumb-item a {
+      color: #f0f6e9;
+      transition: color 0.3s ease;
+    }
+    .breadcrumb-bar .breadcrumb-item a:hover {
+      color: #d1e89b;
+      text-decoration: underline;
+    }
+    .breadcrumb-bar .breadcrumb-item.active {
+      color: #e9f7cf;
+      cursor: default;
+    }
+    .breadcrumb-title {
+      color: #fff;
+      font-weight: 700;
+      font-size: 2rem;
+      margin: 0;
+      letter-spacing: 0.02em;
+    }
+
+    /* Card */
+    .card {
+      background: var(--bg-light);
+      border: 1px solid var(--border-light);
+      border-radius: 12px;
+      box-shadow: 0 4px 8px var(--shadow-light);
+      margin-bottom: 2rem;
+      transition: box-shadow 0.3s ease;
+    }
+    .card:hover {
+      box-shadow: 0 8px 16px var(--shadow-light);
+    }
+    .card-body {
+      padding: 2rem;
+    }
+
+    /* Tabs */
+    .nav-tabs {
+      border-bottom: 2px solid var(--border-light);
+    }
+    .nav-tabs .nav-link {
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-bottom: 3px solid transparent;
+      transition: all 0.3s ease;
+      cursor: pointer;
+      letter-spacing: 0.02em;
+    }
+    .nav-tabs .nav-link:hover {
+      color: var(--primary-green-dark);
+      border-bottom-color: var(--primary-green-dark);
+    }
+    .nav-tabs .nav-link.active {
+      color: var(--primary-green);
+      border-bottom-color: var(--primary-green);
+      background: transparent;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 10px;
+      font-size: 0.95rem;
+    }
+    thead th {
+      color: var(--primary-green);
+      font-weight: 700;
+      border-bottom: 2px solid var(--primary-green);
+      padding-bottom: 0.5rem;
+      text-align: left;
+    }
+    tbody tr {
+      background: #fff;
+      box-shadow: 0 2px 6px var(--shadow-light);
+      border-radius: 10px;
+      transition: background-color 0.3s ease;
+    }
+    tbody tr:hover {
+      background: #f3f9f1;
+    }
+    tbody td {
+      padding: 1rem 1rem;
+      vertical-align: middle;
+      border: none;
+    }
+
+    /* Avatar & name in tables */
+    .table-avatar {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .avatar-img {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      object-fit: cover;
+      box-shadow: 0 2px 5px var(--shadow-light);
+      transition: transform 0.3s ease;
+    }
+    .table-avatar a {
+      color: var(--text-dark);
+      font-weight: 600;
+      text-decoration: none;
+    }
+    .table-avatar a span {
+      display: block;
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Badges */
+    .badge {
+      padding: 0.4em 0.75em;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 20px;
+      text-transform: capitalize;
+    }
+    .bg-success-light {
+      background-color: #d9f0d9;
+      color: #2e7d32;
+    }
+    .bg-warning-light {
+      background-color: #fff4cc;
+      color: #f0a500;
+    }
+    .bg-danger-light {
+      background-color: #f8d7da;
+      color: #b02a37;
+    }
+    .bg-info-light {
+      background-color: #d1ecf1;
+      color: #0c5460;
+    }
+
+    /* Buttons */
+    .btn {
+      border-radius: 25px;
+      padding: 0.5rem 1.25rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: background-color 0.3s ease;
+    }
+    .btn.bg-success-light {
+      background-color: var(--primary-green);
+      color: white;
+      border: none;
+    }
+    .btn.bg-success-light:hover {
+      background-color: var(--primary-green-dark);
+      color: white;
+    }
+    .btn.bg-info-light {
+      background-color: #17a2b8;
+      color: white;
+      border: none;
+    }
+    .btn.bg-info-light:hover {
+      background-color: #117a8b;
+    }
+    .btn.bg-danger-light {
+      background-color: #dc3545;
+      color: white;
+      border: none;
+    }
+    .btn.bg-danger-light:hover {
+      background-color: #b02a37;
+    }
+
+    /* Table action buttons */
+    .table-action {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+      .card-body {
+        padding: 1rem;
+      }
+      .nav-tabs .nav-link {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+      }
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+      thead tr {
+        display: none;
+      }
+      tbody tr {
+        margin-bottom: 1rem;
+        box-shadow: none;
+        background: var(--bg-light);
+        border: 1px solid var(--border-light);
+        border-radius: 12px;
+        padding: 1rem;
+      }
+      tbody td {
+        padding: 0.5rem 0;
+        text-align: right;
+        position: relative;
+        padding-left: 50%;
+      }
+      tbody td::before {
+        position: absolute;
+        top: 50%;
+        left: 1rem;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+        transform: translateY(-50%);
+        font-weight: 600;
+        color: var(--primary-green);
+        content: attr(data-label);
+        text-align: left;
+      }
+    }
+  </style>
   </head>
   <body>
     <!-- Main Wrapper -->
@@ -279,8 +541,8 @@
 
                     <!-- Prescription Tab -->
                     <div class="tab-pane fade show active" id="pres">
-                      <div class="text-right">
-                        <a href="{% url 'create-prescription' pk=patient.patient_id %}" class="add-new-btn"
+                      <div class="text-right" >
+                        <a href="{% url 'create-prescription' pk=patient.patient_id %}" class="add-new-btn" style="background-color: #95C270;"
                           >Add Prescription</a
                         >
                       </div>

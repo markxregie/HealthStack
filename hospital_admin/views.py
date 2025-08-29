@@ -3,7 +3,7 @@ from email.mime import image
 from multiprocessing import context
 from unicodedata import name
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_control
 from django.contrib.auth.models import User
@@ -22,7 +22,8 @@ from .models import Admin_Information,specialization,service,hospital_department
 import random,re
 import string
 import uuid
-from django.db.models import  Count
+import json
+from django.db.models import Count
 from datetime import datetime
 import datetime
 from django.views.decorators.csrf import csrf_exempt
@@ -34,6 +35,22 @@ from django.utils.html import strip_tags
 from .utils import searchMedicines
 
 # Create your views here.
+
+@csrf_exempt
+@login_required(login_url='admin_login')
+@cache_control(no_cache=True, must_revalidate=True, no_store=True)
+def dashboard(request):
+    """Dashboard view for hospital admin - simple landing page"""
+    if request.user.is_hospital_admin:
+        user = Admin_Information.objects.get(user=request.user)
+        context = {'admin': user}
+        return render(request, 'hospital_admin/dashboard.html', context)
+    elif request.user.is_labworker:
+        return redirect('labworker-dashboard')
+    elif request.user.is_pharmacist:
+        return redirect('pharmacist-dashboard')
+    else:
+        return redirect('admin-logout')
 
 @csrf_exempt
 @login_required(login_url='admin_login')
@@ -124,7 +141,7 @@ def admin_login(request):
             login(request, user)
             if user.is_hospital_admin:
                 messages.success(request, 'User logged in')
-                return redirect('admin-dashboard')
+                return redirect('dashboard')
             elif user.is_labworker:
                 messages.success(request, 'User logged in')
                 return redirect('labworker-dashboard')
@@ -500,53 +517,55 @@ def generate_random_specimen():
 def create_report(request, pk):
     if request.user.is_labworker:
         lab_workers = Clinical_Laboratory_Technician.objects.get(user=request.user)
-        prescription =Prescription.objects.get(prescription_id=pk)
+        try:
+            prescription = Prescription.objects.get(prescription_id=pk)
+        except Prescription.DoesNotExist:
+            messages.error(request, 'Prescription not found.')
+            return redirect('mypatient-list')
         patient = Patient.objects.get(patient_id=prescription.patient_id)
         doctor = Doctor_Information.objects.get(doctor_id=prescription.doctor_id)
         tests = Prescription_test.objects.filter(prescription=prescription).filter(test_info_pay_status='Paid')
+        test_names = Test_Information.objects.all()  # Get all test names for dropdown
         
 
         if request.method == 'POST':
             report = Report(doctor=doctor, patient=patient)
             
-            specimen_type = request.POST.getlist('specimen_type')
-            collection_date  = request.POST.getlist('collection_date')
-            receiving_date = request.POST.getlist('receiving_date')
-            test_name = request.POST.getlist('test_name')
-            result = request.POST.getlist('result')
-            unit = request.POST.getlist('unit')
-            referred_value = request.POST.getlist('referred_value')
+            specimen_type = request.POST.get('specimen_type')
+            collection_date  = request.POST.get('collection_date')
+            receiving_date = request.POST.get('receiving_date')
             delivery_date = request.POST.get('delivery_date')
             other_information= request.POST.get('other_information')
 
-            # # Save to report table
-            # report.test_name = test_name
-            # report.result = result
+            # Get test data from multi-select form
+            test_names = request.POST.getlist('test_name[]')
+            test_ids = request.POST.getlist('test_id[]')
+            results = request.POST.getlist('result[]')
+            units = request.POST.getlist('unit[]')
+            referred_values = request.POST.getlist('referred_value[]')
+
+            # Save to report table
             report.delivery_date = delivery_date
             report.other_information = other_information
-            # #report.specimen_id =generate_random_specimen()
-            # report.specimen_type = specimen_type
-            # report.collection_date  = collection_date 
-            # report.receiving_date = receiving_date
-            # report.unit = unit
-            # report.referred_value = referred_value
-
             report.save()
 
-            for i in range(len(specimen_type)):
+            # Create specimen entry (single entry since it's a dropdown now)
+            if specimen_type:  # Only create if specimen type is selected
                 specimens = Specimen(report=report)
-                specimens.specimen_type = specimen_type[i]
-                specimens.collection_date = collection_date[i]
-                specimens.receiving_date = receiving_date[i]
+                specimens.specimen_type = specimen_type
+                specimens.collection_date = collection_date
+                specimens.receiving_date = receiving_date
                 specimens.save()
                 
-            for i in range(len(test_name)):
-                tests = Test(report=report)
-                tests.test_name=test_name[i]
-                tests.result=result[i]
-                tests.unit=unit[i]
-                tests.referred_value=referred_value[i]
-                tests.save()
+            # Create test entries for each selected test
+            for i in range(len(test_names)):
+                if test_names[i]:  # Only create if test name exists
+                    tests = Test(report=report)
+                    tests.test_name = test_names[i]
+                    tests.result = results[i] if i < len(results) else ''
+                    tests.unit = units[i] if i < len(units) else ''
+                    tests.referred_value = referred_values[i] if i < len(referred_values) else ''
+                    tests.save()
             
             # mail
             doctor_name = doctor.name
@@ -555,6 +574,8 @@ def create_report(request, pk):
             patient_email = patient.email
             report_id = report.report_id
             delivery_date = report.delivery_date
+            collection_date = collection_date  # Assuming this is a list, we can take the first one for the email
+            receiving_date = receiving_date  # Assuming this is a list, we can take the first one for the email
             
             subject = "Report Delivery"
 
@@ -576,7 +597,39 @@ def create_report(request, pk):
 
             return redirect('mypatient-list')
 
-        context = {'prescription':prescription,'lab_workers':lab_workers,'tests':tests}
+        # Predefined specimen types for dropdown
+        specimen_types = [
+            'Blood',
+            'Urine',
+            'Saliva',
+            'Sputum',
+            'Stool (Feces)',
+            'Tissue Biopsy',
+            'Cerebrospinal Fluid (CSF)',
+            'Semen',
+            'Vaginal Swab',
+            'Nasal Swab',
+            'Throat Swab',
+            'Amniotic Fluid',
+            'Pleural Fluid',
+            'Synovial Fluid (Joint Fluid)',
+            'Bone Marrow',
+            'Other (Specify)'
+
+        ]
+        
+        # Convert test_names to JSON for JavaScript usage
+        test_names_json = json.dumps([{'test_id': test.test_id, 'test_name': test.test_name} for test in test_names])
+        
+        context = {
+            'prescription': prescription,
+            'lab_workers': lab_workers,
+            'tests': tests, 
+            'test_names': test_names, 
+            'test_names_json': test_names_json, 
+            'patient_id': patient.patient_id,
+            'specimen_types': specimen_types
+        }
         return render(request, 'hospital_admin/create-report.html',context)
 
 @csrf_exempt
@@ -1026,11 +1079,25 @@ def edit_department(request,pk):
 def labworker_dashboard(request):
     if request.user.is_authenticated:
         if request.user.is_labworker:
+            # Check if the lab worker is also an admin and redirect to admin dashboard
+            if request.user.is_hospital_admin:
+                return redirect('admin-dashboard')
             
-            lab_workers = Clinical_Laboratory_Technician.objects.get(user=request.user)
+            # Set the number of lab technicians to 4
+            total_labworker_count = 4
+            lab_workers = Clinical_Laboratory_Technician.objects.all()  # Keep this for any other logic if needed
             doctor = Doctor_Information.objects.all()
-            context = {'doctor': doctor,'lab_workers':lab_workers}
-            return render(request, 'hospital_admin/labworker-dashboard.html',context)
+            total_patient_count = Patient.objects.count()
+            available_tests = Test_Information.objects.all()
+
+            context = {
+                'doctor': doctor,
+                'lab_workers': lab_workers,
+                'total_patient_count': total_patient_count,
+                'available_tests': available_tests,
+                'total_labworker_count': total_labworker_count
+            }
+            return render(request, 'hospital_admin/labworker-dashboard.html', context)
 
 @csrf_exempt
 @login_required(login_url='admin-login')
@@ -1071,7 +1138,9 @@ def add_test(request):
 
         return redirect('test-list')
         
-    context = {'lab_workers': lab_workers}
+    # Get all test names for the dropdown
+    test_names = Test_Information.objects.all()
+    context = {'lab_workers': lab_workers, 'test_names': test_names}
     return render(request, 'hospital_admin/add-test.html', context)
 
 @csrf_exempt
@@ -1138,3 +1207,55 @@ def report_history(request):
             report = Report.objects.all()
             context = {'report':report,'lab_workers':lab_workers}
             return render(request, 'hospital_admin/report-list.html',context)
+
+@csrf_exempt
+@login_required(login_url='admin_login')
+def specimen_count_data(request):
+    """Return JSON data with specimen type counts for chart visualization"""
+    if request.user.is_labworker:
+        # Get all distinct specimen types from the database
+        specimen_types = Specimen.objects.values_list('specimen_type', flat=True).distinct().order_by('specimen_type')
+        
+        # Get limit parameter from request to limit number of bars shown
+        try:
+            limit = int(request.GET.get('limit', 8))
+        except ValueError:
+            limit = 8
+        
+        # Get offset parameter for pagination
+        try:
+            offset = int(request.GET.get('offset', 0))
+        except ValueError:
+            offset = 0
+        
+        # Get paginated specimen types
+        paginated_specimen_types = list(specimen_types[offset:offset + limit])
+        
+        # Aggregate specimen counts for the paginated types
+        specimen_counts = Specimen.objects.filter(specimen_type__in=paginated_specimen_types).values('specimen_type').annotate(
+            count=Count('specimen_type')
+        )
+        
+        # Create a dictionary of counts for the paginated specimen types
+        count_dict = {item['specimen_type']: item['count'] for item in specimen_counts}
+        
+        # Prepare data for the paginated specimen types
+        labels = []
+        data = []
+        
+        for specimen_type in paginated_specimen_types:
+            labels.append(specimen_type)
+            data.append(count_dict.get(specimen_type, 0))
+        
+        # Get total count of distinct specimen types for pagination
+        total_specimen_types = specimen_types.count()
+        
+        return JsonResponse({
+            'labels': labels,
+            'data': data,
+            'limit': limit,
+            'offset': offset,
+            'total_specimen_types': total_specimen_types
+        })
+    else:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)

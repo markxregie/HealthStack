@@ -26,7 +26,134 @@
 		
 		<!-- Main CSS -->
         <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}"> 
-		
+		<style>
+        :root {
+            --primary-color: #95C270;
+            --hover-bg-color: #e6f0c8;
+            --danger-color: #E74C3C;
+            --text-color: #333;
+            --border-color: #ddd;
+            --bg-light: #f0f6ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-color);
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .btn-primary, .bg-success-light {
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: #fff;
+            border: none;
+            padding: 8px 20px;
+        }
+
+        .btn-primary:hover {
+            background: #7da859;
+        }
+
+        .bg-danger-light {
+            background: var(--danger-color);
+            color: #fff;
+            border-radius: 30px;
+            padding: 5px 12px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .bg-danger-light:hover {
+            background: #c0392b;
+            color: #fff;
+        }
+
+        .table {
+            border-collapse: collapse !important;
+            width: 100%;
+            background: #fff;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px;
+        }
+
+        .table td {
+            padding: 12px;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .table-hover tbody tr:hover {
+            background: var(--hover-bg-color);
+        }
+
+        .avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            object-fit: cover;
+            border: 2px solid var(--primary-color);
+        }
+
+        .page-header h3 {
+            color: var(--primary-color);
+            font-weight: 700;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+        }
+
+        .modal-content {
+            border-radius: 12px;
+        }
+
+        .modal-header {
+            background: var(--primary-color);
+            color: #fff;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .modal-body .form-control {
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .actions a {
+            margin: 0 2px;
+        }
+    </style>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
@@ -102,7 +229,7 @@
 												
 													<td class="text-center">
 														<div class="actions">
-															<a class="btn btn-sm bg-success-light" data-toggle="modal" data-target="#modal-default{{dep.hospital_department_name}}">
+															<a class="btn btn-sm bg-success-light" data-toggle="modal" data-target="#modal-default{{dep.hospital_department_id}}">
 																<i class="fe fe-pencil"></i> Edit
 															</a>
 															<a  data-toggle="modal" data-target="#delete_modal{{dep.hospital_department_id}}" class="btn btn-sm bg-danger-light">
@@ -114,7 +241,7 @@
 													
 												</tr>
 
-												<div class="modal fade" id="modal-default{{dep.hospital_department_name}}" aria-hidden="true" role="dialog">
+												<div class="modal fade" id="modal-default{{dep.hospital_department_id}}" aria-hidden="true" role="dialog">
 												<form action="{%url 'edit-department' pk=dep.hospital_department_id%}" method="POST"
 													enctype="multipart/form-data">
 													{% csrf_token %}
