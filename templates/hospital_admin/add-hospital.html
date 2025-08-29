@@ -36,6 +36,100 @@
 	<link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}">
 
 	<link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/add-hospital.css'%}">
+		<style>
+	:root {
+			--primary-color: #95C270;   /* Main Green */
+			--primary-hover: #7eaa5c;   /* Darker Green Hover */
+			--light-bg: #e6f0c8;        /* Soft green background */
+			--danger-color: #dc3545;    /* Red */
+			--danger-hover: #b52a38;    /* Darker red */
+			--text-dark: #333;
+			}
+
+			/* General Page */
+			body {
+			background-color: #f8faf7;
+			color: var(--text-dark);
+			}
+
+			/* Card Styling */
+			.card {
+			border-radius: 12px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+			border: none;
+			}
+			.card-title {
+			color: var(--primary-color);
+			font-weight: 600;
+			}
+
+			/* Form Inputs */
+			.form-control, select, textarea {
+			border-radius: 8px;
+			border: 1px solid #cfd8cc;
+			transition: border-color 0.3s, box-shadow 0.3s;
+			}
+			.form-control:focus, select:focus, textarea:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 3px rgba(149, 194, 112, 0.25);
+			}
+
+			/* Upload Button */
+			.change-photo-btn {
+			background: var(--primary-color);
+			color: #fff;
+			border-radius: 8px;
+			padding: 8px 14px;
+			cursor: pointer;
+			transition: 0.3s;
+			}
+			.change-photo-btn:hover {
+			background: var(--primary-hover);
+			color: #fff;
+			}
+
+			/* Submit Button */
+			.submit-btn {
+			background: var(--primary-color) !important;
+			border: none !important;
+			padding: 10px 20px;
+			border-radius: 8px;
+			font-weight: 500;
+			transition: 0.3s;
+			}
+			.submit-btn:hover {
+			background: var(--primary-hover) !important;
+			}
+
+			/* Trash Buttons */
+			.btn-danger.trash {
+			background: var(--danger-color);
+			color: #fff;
+			border-radius: 6px;
+			}
+			.btn-danger.trash:hover {
+			background: var(--danger-hover);
+			}
+
+			/* Add More Links */
+			.add-more a {
+			color: var(--primary-color) !important;
+			font-weight: 500;
+			transition: 0.3s;
+			}
+			.add-more a:hover {
+			color: var(--primary-hover) !important;
+			text-decoration: underline;
+			}
+
+			/* Breadcrumb */
+			.breadcrumb-title {
+			color: var(--primary-color);
+			}
+			.breadcrumb .breadcrumb-item.active {
+			color: var(--primary-hover);
+			}
+		</style>
 
 	<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>

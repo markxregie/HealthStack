@@ -26,7 +26,142 @@
 		
 		<!-- Main CSS -->
         <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}"> 
-		
+		 <style>
+        :root {
+            --primary-color: #95C270;
+            --hover-bg-color: #e6f0c8;
+            --danger-color: #E74C3C;
+            --text-color: #333;
+            --light-text: #777;
+            --border-color: #ddd;
+            --bg-light: #f0f6ff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        .card {
+            background: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+
+        .card-header {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px 20px;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .btn-primary, .btn-outline-info, .btn-danger {
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            border: none;
+            color: #fff;
+            padding: 10px 20px;
+        }
+        .btn-primary:hover {
+            background: #7da859;
+        }
+
+        .btn-outline-info {
+            color: var(--primary-color);
+            border: 1px solid var(--primary-color);
+            padding: 6px 12px;
+        }
+        .btn-outline-info:hover {
+            background: var(--hover-bg-color);
+            color: var(--text-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            border: none;
+            color: #fff;
+            padding: 6px 12px;
+        }
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .table {
+            width: 100%;
+            border-collapse: collapse !important;
+            background: #fff;
+        }
+
+        .table th {
+            background: var(--primary-color);
+            color: #fff;
+            padding: 12px;
+            text-align: left;
+        }
+
+        .table td {
+            padding: 12px;
+            vertical-align: middle;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .table-hover tbody tr:hover {
+            background: var(--hover-bg-color);
+        }
+
+        .table-avatar {
+            display: flex;
+            align-items: center;
+        }
+
+        .table-avatar img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+
+        .page-header {
+            background: transparent !important;
+            border: none !important;
+            padding: 10px 0;
+            box-shadow: none !important;
+        }
+
+        .page-title {
+            color: var(--primary-color);
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .breadcrumb {
+            background: transparent !important;
+            margin-bottom: 0;
+            padding: 0;
+        }
+
+        .breadcrumb-item a {
+            color: var(--primary-color);
+            text-decoration: none;
+        }
+
+        .breadcrumb-item.active {
+            color: var(--light-text);
+        }
+    </style>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
