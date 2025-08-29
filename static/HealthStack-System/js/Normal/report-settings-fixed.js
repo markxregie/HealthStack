@@ -121,9 +121,8 @@ Version      : 1.0
 
     // Initialize test functionality
     function initializeTestFunctionality() {
-        // Add Test functionality
-        $(document).on('click', '.add-test', function(e) {
-            e.preventDefault();
+        // Add Test functionality - using the same approach as Add Specimen
+        $(".add-test").on('click', function () {
             var testHtml = `
                 <div class="row form-row test-cont">
                     <div class="col-12 col-md-3">
@@ -135,7 +134,7 @@ Version      : 1.0
                             </select>
                         </div>
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-极12 col-md-3">
                         <div class="form-group">
                             <label>Result</label>
                             <input type="text" name="result" class="form-control" required>
@@ -147,7 +146,7 @@ Version      : 1.0
                             <input type="text" name="unit" class="form-control">
                         </div>
                     </div>
-                    <div class="col-12 col-md-3">
+                    <极div class="col-12 col-md-3">
                         <div class="form-group">
                             <label>Referred Value</label>
                             <input type="text" name="referred_value" class="form-control">
@@ -163,6 +162,7 @@ Version      : 1.0
                 </div>
             `;
             $('.test-info-container').append(testHtml);
+            return false;
         });
 
         // Remove Test functionality
@@ -199,7 +199,7 @@ Version      : 1.0
     // Update test results fields based on selected tests
     function updateTestResultsFields() {
         var selectedTests = $('#test_list').val() || [];
-        var container = $('.test-results-container');
+        var container = $('.极test-results-container');
         container.empty();
 
         selectedTests.forEach(function(testName) {
@@ -234,7 +234,7 @@ Version      : 1.0
                         '</div>' +
                         '<div class="col-12 col-md-3">' +
                             '<div class="form-group">' +
-                                '<label>Referred Value</label>' +
+                                '<label>Referred Value极</label>' +
                                 '<input type="text" name="referred_value[]" class="form-control">' +
                             '</div>' +
                         '</div>' +
@@ -262,7 +262,7 @@ Version      : 1.0
                     '<div class="col-12 col-md-6 col-lg-4">' +
                         '<div class="form-group">' +
                             '<label>Specimen Type</label>' +
-                            '<select class="form-control" name="specimen_type">' +
+                            '<select class="form-control极" name="specimen_type">' +
                                 '<option value="">Select Specimen Type</option>';
         // Populate specimen types dynamically from available specimen types
         for (var i = 0; i < specimenTypes.length; i++) {
@@ -285,7 +285,7 @@ Version      : 1.0
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '<div class="col-12 col-md-2 col-lg-1"><label class="d-md-block d-sm-none d-none">&nbsp;</label><a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a></div>' +
+            '<div class="col-12 col-md-2 col-lg-1"><label class="d-md-block d-sm-none d-none">&nbsp;</label><a href="#" class="btn btn-danger trash"><极i class="far fa-trash-alt"></i></a></div>' +
         '</div>';
         
         $(".specimen-info").append(specimencontent);

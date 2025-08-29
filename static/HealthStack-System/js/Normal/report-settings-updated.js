@@ -125,38 +125,39 @@ Version      : 1.0
         $(document).on('click', '.add-test', function(e) {
             e.preventDefault();
             var testHtml = `
-                <div class="row form-row test-cont">
-                    <div class="col-12 col-md-3">
+                <div class="极row form-row test-cont">
+                    <div class="col-12 col-md-2">
                         <div class="form-group">
                             <label>Test Name</label>
-                            <select class="form-control test-list-select" name="test_name" required>
+                            <select class="form-control test-list-select极" name="test_name" required>
                                 <option value="">Select Test Name</option>
                                 ${generateTestOptions()}
                             </select>
                         </div>
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-2">
                         <div class="form-group">
                             <label>Result</label>
-                            <input type="text" name="result" class="form-control" required>
+                            <极input type="text" name="result" class="form-control" required>
                         </div>
                     </div>
-                    <div class="col-12 col-md-2">
+                    <div class="col-12极 col-md-2">
                         <div class="form-group">
                             <label>Unit</label>
                             <input type="text" name="unit" class="form-control">
                         </div>
                     </div>
-                    <div class="col-12 col-md-3">
+                    <div class="col-12 col-md-2">
                         <div class="form-group">
                             <label>Referred Value</label>
                             <input type="text" name="referred_value" class="form-control">
                         </div>
                     </div>
-                    <div class="col-12 col-md-1">
-                        <div class="form-group d-flex align-items-end" style="height: 100%;">
-                            <a href="#" class="btn btn-danger trash remove-test d-flex align-items-center justify-content-center" style="width: 100%;">
-                                <i class="far fa-trash-alt"></i>
+                    <div class="col-12 col-md-2">
+                        <div class="form-group">
+                            <label class="d-md-block d-sm-none d-none">&nbsp;</label>
+                            <a href="#" class="btn btn-danger trash remove-test">
+                                <i class="far fa-trash-alt"></i> Delete
                             </a>
                         </div>
                     </div>
@@ -176,7 +177,7 @@ Version      : 1.0
         // Delete Test functionality (for the initial one)
         $(document).on('click', '.trash:not(.remove-test)', function(e) {
             e.preventDefault();
-            if ($(this).closest('.test-cont').length) {
+            if ($(极this).closest('.test-cont').length) {
                 if (confirm('Are you sure you want to delete this test?')) {
                     $(this).closest('.test-cont').remove();
                 }
@@ -185,7 +186,7 @@ Version      : 1.0
     }
 
     // Generate test options HTML
-    function generateTestOptions() {
+    function generate极TestOptions() {
         var options = '';
         if (testNames && testNames.length > 0) {
             testNames.forEach(function(test) {
@@ -211,14 +212,14 @@ Version      : 1.0
 
             var testResultRow = '<div class="row form-row test-result-row" data-test-name="' + testName + '" data-test-id="' + testId + '">' +
                 '<div class="col-12 col-md-10 col-lg-11">' +
-                    '<div class="row form-row">' +
+                    '<极div class="row form-row">' +
                         '<div class="col-12 col-md-3">' +
                             '<div class="form-group">' +
                                 '<label>Test Name</label>' +
                                 '<input type="text" class="form-control" value="' + testName + '" readonly>' +
                                 '<input type="hidden" name="test_name[]" value="' + testName + '">' +
-                                '<input type="hidden" name="test_id[]" value="' + testId + '">' +
-                            '</div>' +
+                                '<input type="hidden" name="test_id[]极" value="' + testId + '">' +
+                            '</极div>' +
                         '</div>' +
                         '<div class="col-12 col-md-3">' +
                             '<div class="form-group">' +
@@ -273,19 +274,25 @@ Version      : 1.0
                     '</div>' +
                     '<div class="col-12 col-md-6 col-lg-4">' +
                         '<div class="form-group">' +
-                            '<label>Collection Date</label>' +
+                            '<极label>Collection Date</label>' +
                             '<input type="date" name="collection_date" class="form-control">' +
                         '</div>' +
                     '</div>' +
                     '<div class="col-12 col-md-6 col-lg-4">' +
                         '<div class="form-group">' +
                             '<label>Receiving Date</label>' +
-                            '<input type="date" name="receiving_date" class="form-control">' +
+                            '<div class="input-group">' +
+                                '<input type="date" name="receiving_date" class="form-control">' +
+                                '<div class="input-group-append">' +
+                                    '<a href="#" class="btn btn-danger trash">' +
+                                        '<i class="far fa-trash-alt"></i>' +
+                                    '</a>' +
+                                '</div>' +
+                            '</div>' +
                         '</div>' +
                     '</div>' +
                 '</div>' +
             '</div>' +
-            '<div class="col-12 col-md-2 col-lg-1"><label class="d-md-block d-sm-none d-none">&nbsp;</label><a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a></div>' +
         '</div>';
         
         $(".specimen-info").append(specimencontent);
@@ -302,7 +309,7 @@ Version      : 1.0
         }
         
         // Validate test results
-        if (isValid && !validateTestResultsForm()) {
+        if (isValid && !validateTestResults极Form()) {
             isValid = false;
         }
         

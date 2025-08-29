@@ -499,6 +499,8 @@ def create_prescription(request,pk):
             patient = Patient.objects.get(patient_id=pk) 
             create_date = datetime.date.today()
             
+            # Get all test names for the dropdown
+            test_names = Test_Information.objects.all()
 
             if request.method == 'POST':
                 prescription = Prescription(doctor=doctor, patient=patient)
@@ -552,7 +554,7 @@ def create_prescription(request,pk):
                 messages.success(request, 'Prescription Created')
                 return redirect('patient-profile', pk=patient.patient_id)
              
-        context = {'doctor': doctor,'patient': patient}  
+        context = {'doctor': doctor,'patient': patient, 'test_names': test_names}  
         return render(request, 'create-prescription.html',context)
 
         
