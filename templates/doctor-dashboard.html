@@ -224,6 +224,9 @@
     </head>
 
 <body>
+    <!-- Toast container for new messages -->
+    <div id="message-toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+    
     {% if user.is_authenticated %}
     <div class="main-wrapper">
         <header class="header">{% include 'doctor-navbar.html' %}</header>
@@ -503,17 +506,91 @@
 
     <script src="{% static 'HealthStack-System/js/Normal/sidebar.js' %}"></script>
 
-    {% if messages %}
-    <script>
-        {% for message in messages %}
-        $(document).ready(function () {
-            $('.toast').toast('show');
+{% if messages %}
+<script>
+$(document).ready(function() {
+    // Show existing backend messages
+    $('.toast').toast('show');
+
+    var lastMessageId = 0;
+    var notificationSound = new Audio('{% static "HealthStack-System/sounds/notification.mp3" %}');
+
+    function checkForNewMessages() {
+        $.ajax({
+            headers: { "X-CSRFToken": '{{ csrf_token }}' },
+            url: "{% url 'chat-check-new-messages' %}",
+            method: "POST",
+            data: {
+                last_id: lastMessageId,
+                user_id: "{{ user.id }}"
+            },
+            dataType: 'json',
+            success: function(resp) {
+                if (resp && resp.success && resp.new_messages && resp.new_messages.length > 0) {
+                    lastMessageId = resp.new_messages[resp.new_messages.length - 1].id;
+
+                    resp.new_messages.forEach(function(message) {
+                        showMessageNotification(message);
+                    });
+
+                    try {
+                        notificationSound.play();
+                    } catch (e) {
+                        console.log("Notification sound error:", e);
+                    }
+                }
+            },
+            error: function(err) {
+                console.log("Error checking for new messages:", err);
+            }
         });
-        {% endfor %}
-    </script>
-    {% endif %}
+    }
 
+    function showMessageNotification(message) {
+        var notificationHtml = `
+            <div class="alert alert-info alert-dismissible fade show message-notification" role="alert" style="
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                z-index: 9999;
+                min-width: 350px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                border-radius: 8px;
+                border-left: 4px solid var(--accent-color);
+            ">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-comment-medical mr-3" style="font-size: 1.5rem; color: var(--accent-color);"></i>
+                    <div class="flex-grow-1">
+                        <h6 class="alert-heading mb-1" style="color: var(--accent-color);">
+                            <i class="fas fa-user mr-1"></i>New Message from Patient
+                        </h6>
+                        <p class="mb-1 text-dark">${message.patient_name}: ${message.message}</p>
+                        <small class="text-muted">${message.timestamp}</small>
+                    </div>
+                </div>
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+        `;
 
-</body>
+        $('body').append(notificationHtml);
 
-</html>
+        setTimeout(function() {
+            $('.message-notification').alert('close');
+        }, 8000);
+
+        $('.message-notification').on('click', function() {
+            window.location.href = "{% url 'chat-home' pk=user.id %}?u=" + message.patient_id;
+        });
+    }
+
+    setInterval(checkForNewMessages, 5000);
+    setTimeout(checkForNewMessages, 2000);
+});
+</script>
+
+<audio id="notificationSound" preload="auto">
+    <source src="{% static 'HealthStack-System/sounds/notification.mp3' %}" type="audio/mpeg">
+</audio>
+{% endif %}

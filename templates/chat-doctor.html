@@ -1,4 +1,5 @@
 {% load static %}
+{% load custom_tags %}
 {% load tz%}
 <!DOCTYPE html> 
 <html lang="en">
@@ -278,33 +279,43 @@
                                         </div>
                                     </form>
                                     <div class="chat-users-list">
-                                        <div class="chat-scroll">
-                                        {% for u in patient %} {% if not u.id == 1 and not u.id == user.id %}
-                                            <a href="{% url 'chat-home' pk=user.id %}?u={{u.user.id}}" class="media {% if u.user.id == chat_id %}active{% endif %}">
-                                                <div class="media-img-wrap">
-                                                    {% if u.user.login_status %}
-                                                    <div class="avatar avatar-online">
-                                                        <img src="{{ u.featured_image.url }}" alt="User Image" class="avatar-img rounded-circle">
-                                                    </div>
-                                                    {% else %}
-                                                    <div class="avatar avatar-away">
-                                                        <img src="{{ u.featured_image.url }}" alt="User Image" class="avatar-img rounded-circle">
-                                                    </div>
-                                                    {% endif %}
-                                                </div>
-                                                <div class="media-body">
-                                                    <div>
-                                                        <div class="user-name">{{u.name}}</div>
-                                                        <div class="user-last-chat">
-                                                            {%if u.user.login_status%}Online{%else%}Offline{%endif%}
-                                                        </div>
-                                                    </div>
-                                                    <div>
-                                                        <div class="last-chat-time block">{{u.serial_number}}</div>
-                                                    </div>
-                                                </div>
-                                            </a>
-                                        {% endif %}{% endfor %}
+    <div class="chat-scroll">
+        {% for u in patient %} 
+        {% if not u.id == 1 and not u.id == user.id %}
+            <a href="{% url 'chat-home' pk=user.id %}?u={{u.user.id}}" class="media {% if u.user.id == chat_id %}active{% endif %}">
+                <div class="media-img-wrap">
+                    {% if u.user.login_status %}
+                        <div class="avatar avatar-online">
+                            <img src="{{ u.featured_image.url }}" alt="User Image" class="avatar-img rounded-circle">
+                        </div>
+                    {% else %}
+                        <div class="avatar avatar-away">
+                            <img src="{{ u.featured_image.url }}" alt="User Image" class="avatar-img rounded-circle">
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="media-body d-flex justify-content-between align-items-center">
+                    <div>
+                        <div class="user-name {% if u.user.id|unread_count:user.id > 0 %}font-weight-bold{% endif %}">
+                            {{ u.name }}
+                        </div>
+                        <div class="user-last-chat">
+                            {% if u.user.login_status %}Online{% else %}Offline{% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        {% if u.user.id|unread_count:user.id > 0 %}
+                            <div class="badge badge-primary rounded-circle p-1">
+                                {{ u.user.id|unread_count:user.id }}
+                            </div>
+                        {% else %}
+                            <div class="last-chat-time block">{{ u.serial_number }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </a>
+        {% endif %}
+        {% endfor %}
                                         </div>
                                     </div>
                                 </div>
@@ -333,51 +344,60 @@
                                     </div>
 
                                     <div class="chat-body">
-                                        <div class="chat-scroll chat-box">
-                                            <ul class="list-unstyled">
-                                                {% for chat in chats %} 
-                                                {% if chat.user_from == user %}
-                                                <li class="media sent">
-                                                    <div class="media-body">
-                                                        <div class="msg-box">
-                                                            <div class="chat-bubble" data-id="{{chat.id}}">
-                                                                <p>{{chat.message}}</p>
-                                                                <ul class="chat-msg-info">
-                                                                    <li>
-                                                                        <div class="chat-time">
-                                                                            <span>{{chat.date_created|localtime}}</span>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                {% else %}
-                                                <li class="media received">
-                                                    <div class="avatar">
-                                                        <img src="{{ pat.featured_image.url }}" alt="User Image" class="avatar-img rounded-circle">
-                                                    </div>
-                                                    <div class="media-body">
-                                                        <div class="msg-box">
-                                                            <div class="chat-bubble" data-id="{{chat.id}}">
-                                                                <p>{{chat.message}}</p>
-                                                                <ul class="chat-msg-info">
-                                                                    <li>
-                                                                        <div class="chat-time">
-                                                                            <span>{{chat.date_created|localtime}}</span>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                                {% endif %} 
-                                                {% endfor %}
-                                            </ul>
-                                        </div>
+    <div class="chat-scroll">
+        <ul class="list-unstyled" id="chat-box-ul">
+            {% for chat in chats %} 
+            {% if chat.user_from == user %}
+            <!-- Sender side -->
+            <li class="media sent">
+                <div class="media-body">
+                    <div class="msg-box">
+                        <div class="chat-bubble" data-id="{{chat.id}}">
+                            <p class="m-0">{{chat.message}}</p>
+                            <ul class="chat-msg-info">
+                                <li>
+                                    <div class="chat-time">
+                                        <span>{{chat.date_created|date:"g:i A"}}</span>
+                                        
+                                        <!-- Messenger-style checkmarks -->
+                                        {% if chat.is_read %}
+                                            <span style="color:#0084ff; margin-left:5px;">✔✔</span>
+                                        {% else %}
+                                            <span style="color:gray; margin-left:5px;">✔</span>
+                                        {% endif %}
                                     </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% else %}
+            <!-- Receiver side -->
+            <li class="media received">
+                <div class="avatar">
+                    <img src="{{ doc.featured_image.url }}" alt="User Image" class="avatar-img rounded-circle">
+                </div>
+                <div class="media-body">
+                    <div class="msg-box">
+                        <div class="chat-bubble" data-id="{{chat.id}}">
+                            <p class="m-0">{{chat.message}}</p>
+                            <ul class="chat-msg-info">
+                                <li>
+                                    <div class="chat-time">
+                                        <span>{{chat.date_created|date:"g:i A"}}</span>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endif %} 
+            {% endfor %}
+        </ul>
+    </div>
+</div>
                                     
                                     <div class="chat-box-form p-2">
                                         <div class="w-100">
@@ -405,113 +425,140 @@
         <script src="{% static 'HealthStack-System/js/Normal/bootstrap.min.js' %}"></script>
         
         <script>
-            $(function() {
-                // Auto-scroll to the latest message
-                if ($('.chat-bubble:last').length > 0) {
-                    var chatBox = $('.chat-box');
+$(function() {
+    const chatBox = $('#chat-box-ul');
+
+    // Auto-scroll to the latest message on page load
+    if (chatBox.children().length > 0) {
+        chatBox.scrollTop(chatBox[0].scrollHeight);
+    }
+
+    // Handle form submission
+    $('#chat-submit').submit(function(e) {
+        e.preventDefault();
+        const messageInput = $(this).find('textarea[name="message"]');
+        if (messageInput.val().trim() === '') return;
+
+        $.ajax({
+            headers: { "X-CSRFToken": '{{ csrf_token }}' },
+            url: "{% url 'chat-send' %}",
+            method: "POST",
+            data: $(this).serialize(),
+            dataType: "json",
+            success: function(resp) {
+                if (resp.status === 'success') {
+                    const messageText = messageInput.val().trim();
+                    messageInput.val(''); // clear textarea
+                    
+                    // Immediately add the sent message to the chat interface
+                    const currentTime = new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                    const bubble = `
+                        <li class="media sent" data-id="${resp.message_id}">
+                            <div class="media-body">
+                                <div class="msg-box">
+                                    <div class="chat-bubble">
+                                        <p>${messageText}</p>
+                                        <ul class="chat-msg-info">
+                                            <li><div class="chat-time"><span>${currentTime}</span></div></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>`;
+                    chatBox.append(bubble);
                     chatBox.scrollTop(chatBox[0].scrollHeight);
+                    
+                    // Also refresh messages to ensure consistency
+                    setTimeout(chats_renew, 1000);
+                } else {
+                    console.log(resp);
+                    alert('Failed to send message: ' + (resp.error || 'Unknown error'));
                 }
-
-                // Handle form submission
-                $('#chat-submit').submit(function(e) {
-                    e.preventDefault();
-                    var messageInput = $('textarea[name="message"]');
-                    if (messageInput.val().trim() === '') {
-                        return; // Don't send empty messages
-                    }
-
-                    $.ajax({
-                        headers: {
-                            "X-CSRFToken": '{{csrf_token}}'
-                        },
-                        url: "{% url 'chat-send' %}",
-                        method: "POST",
-                        data: $(this).serialize(),
-                        dataType: "json",
-                        error: err => {
-                            console.log(err);
-                            alert('An error occurred');
-                        },
-                        success: function(resp) {
-                            if (typeof resp == "object" && resp.status == 'success') {
-                                location.reload();
-                            } else {
-                                console.log(resp);
-                                alert('An error occurred');
-                            }
-                        }
-                    });
-                });
-
-                // Set up periodic refresh for new messages
-                setInterval(chats_renew, 2500);
-            });
-
-            function chats_renew() {
-                var last_id = 0;
-                if ($('.chat-bubble').length > 0) {
-                    last_id = $('.chat-bubble:last').attr('data-id');
-                }
-                $.ajax({
-                    headers: {
-                        "X-CSRFToken": '{{csrf_token}}'
-                    },
-                    url: "{% url 'chat-renew' %}",
-                    method: "POST",
-                    data: {
-                        last_id: last_id,
-                        user_id: '{{user.id}}',
-                        chat_id: '{{chat_id}}'
-                    },
-                    dataType: 'json',
-                    error: err => {
-                        console.log(err);
-                    },
-                    success: function(resp) {
-                        if (Object.keys(resp).length > 0) {
-                            var chatBox = $('.chat-box ul');
-                            Object.keys(resp).map(k => {
-                                let bubble;
-                                if (resp[k].user_from_id == '{{user.id}}') {
-                                    bubble = `
-                                    <li class="media sent">
-                                        <div class="media-body">
-                                            <div class="msg-box">
-                                                <div class="chat-bubble" data-id="${resp[k].id}">
-                                                    <p>${resp[k].message}</p>
-                                                    <ul class="chat-msg-info">
-                                                        <li><div class="chat-time"><span>${resp[k].date_created}</span></div></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>`;
-                                } else {
-                                    bubble = `
-                                    <li class="media received">
-                                        <div class="avatar">
-                                            <img src="{{ pat.featured_image.url }}" alt="User Image" class="avatar-img rounded-circle">
-                                        </div>
-                                        <div class="media-body">
-                                            <div class="msg-box">
-                                                <div class="chat-bubble" data-id="${resp[k].id}">
-                                                    <p>${resp[k].message}</p>
-                                                    <ul class="chat-msg-info">
-                                                        <li><div class="chat-time"><span>${resp[k].date_created}</span></div></li>
-                                                    </ul>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </li>`;
-                                }
-                                chatBox.append(bubble);
-                            });
-                             $('.chat-box').animate({ scrollTop: $('.chat-box')[0].scrollHeight }, 'fast');
-                        }
-                    }
-                });
+            },
+            error: function(err) {
+                console.log(err);
+                alert('An error occurred');
             }
-        </script>
+        });
+    });
+
+    // Periodic refresh every 2.5 seconds
+    setInterval(chats_renew, 2500);
+
+    function chats_renew() {
+        let last_id = 0;
+        const lastBubble = chatBox.children('li:last');
+        if (lastBubble.length > 0) {
+            last_id = lastBubble.data('id');
+        }
+
+        $.ajax({
+            headers: { "X-CSRFToken": '{{ csrf_token }}' },
+            url: "{% url 'chat-get-messages' %}",
+            method: "POST",
+            data: {
+                last_id: last_id,
+                chat_id: "{{ chat_id|default:'0' }}"
+            },
+            dataType: 'json',
+            success: function(resp) {
+                if (resp && resp.length > 0) {
+                    let newMessages = false;
+                    resp.forEach(chat => {
+                        // Skip if message already exists
+                        if ($('#chat-box-ul .chat-bubble[data-id="'+chat.id+'"]').length > 0) return;
+
+                        let bubble = '';
+                       if (chat.user_from_id == "{{ user.id }}") {
+                            // Sent message
+                            bubble = `
+                            <li class="media sent" data-id="${chat.id}">
+                                <div class="media-body">
+                                    <div class="msg-box">
+                                        <div class="chat-bubble">
+                                            <p>${chat.message}</p>
+                                            <ul class="chat-msg-info">
+                                                <li><div class="chat-time"><span>${chat.date_created}</span></div></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>`;
+                        } else {
+                            // Received message
+                            bubble = `
+                            <li class="media received" data-id="${chat.id}">
+                                <div class="avatar">
+                                    <img src="${chat.user_from_avatar}" alt="User Image" class="avatar-img rounded-circle">
+                                </div>
+                                <div class="media-body">
+                                    <div class="msg-box">
+                                        <div class="chat-bubble">
+                                            <p>${chat.message}</p>
+                                            <ul class="chat-msg-info">
+                                                <li><div class="chat-time"><span>${chat.date_created}</span></div></li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </li>`;
+                        }
+                        chatBox.append(bubble);
+                        newMessages = true;
+                    });
+                    if (newMessages) {
+                        chatBox.scrollTop(chatBox[0].scrollHeight);
+                    }
+                }
+            },
+            error: function(err) {
+                console.log(err);
+            }
+        });
+    }
+});
+</script>
+
     </body>
 
 </html>

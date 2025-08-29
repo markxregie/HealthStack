@@ -194,15 +194,15 @@
                             </thead>
                             <tbody>
                               {% for test in test_carts %}
-                              <tr class="text-center">
-                                <td class="product-remove">
-                                  <a href="{% url 'test-remove-cart' pk=test.item_id %}"><span class="icon-close"></span></a>
-                                </td>
-                                <td>{{test.item.test_info_id}}</td>
-                                <td>{{test.item.test_name}}</td>
-                                <td class="price">{{test.item.test_info_price}}</td>
-                              </tr>
-                              {% endfor %}
+<tr class="text-center">
+  <td class="product-remove">
+    <a href="{% url 'test-remove-cart' test.id %}"><span class="icon-close"></span></a>
+  </td>
+  <td>{{ test.item.test_info_id }}</td>
+  <td>{{ test.item.test_name }}</td>
+  <td class="price">{{ test.item.test_info_price }}</td>
+</tr>
+{% endfor %}
                             </tbody>
                           </table>
                         </div>
@@ -211,16 +211,29 @@
                     <div class="row justify-content-end">
                       <div class="col col-lg-4 col-md-6 mt-5 cart-wrap ftco-animate">
                         <div class="cart-total mb-3">
-                          <h3><b>Cart Totals: </b><span>{{ test_order.get_totals }} Tk.</span></h3>
+                          <h3><b>Cart Totals: </b><span>{{ total }} PHP</span></h3>
                           <hr>
                         </div>
                         <p class="text-center">
-                          <a href="{% url 'ssl-payment-request-test' pk=test_order.user.patient.patient_id id=test_order.id pk2=prescription_id %}" class="btn btn-primary py-3 px-4">
-                            Proceed to Checkout
+                          {% if test_order.payment_status != 'paid' and test_order.payment_status != 'failed' %}
+                          <a href="{% url 'paymongo-test-payment' prescription_id patient.pk test_order.id %}">
+                            <button class="btn btn-primary py-3 px-4">Proceed to Payment</button>
                           </a>
+                          {% elif test_order.payment_status == 'paid' %}
+                          <button class="btn btn-success py-3 px-4" disabled>Payment Completed</button>
+                          {% elif test_order.payment_status == 'failed' %}
+                          <a href="{% url 'paymongo-test-payment' prescription_id patient.pk test_order.id %}">
+                            <button class="btn btn-warning py-3 px-4">Retry Payment</button>
+                          </a>
+                          {% else %}
+                          <a href="{% url 'paymongo-test-payment' prescription_id patient.pk test_order.id %}">
+                            <button class="btn btn-primary py-3 px-4">Proceed to Payment</button>
+                          </a>
+                          {% endif %}
                         </p>
                         <p class="text-center">
-                          <a href="" class="btn btn-info py-3 px-4">Back to Prescription</a>
+                          <a href="{% url 'prescription-view' pk=prescription_id %}" class="btn btn-info py-3 px-4">Back to Prescription</a>
+
                         </p>
                       </div>
                     </div>
