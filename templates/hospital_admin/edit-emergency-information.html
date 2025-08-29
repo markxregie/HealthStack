@@ -26,7 +26,79 @@
 		
 		<!-- Main CSS -->
         <link rel="stylesheet" href="{% static 'HealthStack-System/css/admin/style.css'%}"> 
-		
+		<style> 
+			:root {
+			--primary-color: #95C270;   /* Green */
+			--primary-hover: #7eaa5c;   /* Darker Green */
+			--light-bg: #e6f0c8;        /* Light green hover */
+			--danger-color: #dc3545;    /* Red */
+			--danger-hover: #b52a38;    /* Darker red */
+			--text-dark: #333;
+			}
+
+			/* Breadcrumb */
+			.breadcrumb {
+			background: transparent;
+			}
+			.breadcrumb .breadcrumb-item a {
+			color: var(--primary-color);
+			font-weight: 500;
+			}
+			.breadcrumb .breadcrumb-item.active {
+			color: var(--primary-hover);
+			}
+			.breadcrumb-title {
+			color: var(--primary-color);
+			font-weight: 600;
+			}
+
+			/* Card */
+			.card {
+			border-radius: 12px;
+			box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+			border: none;
+			}
+			.card-body {
+			padding: 24px;
+			}
+
+			/* Profile Image */
+			.profile-img img {
+			border-radius: 12px;
+			border: 3px solid var(--primary-color);
+			padding: 4px;
+			background: #fff;
+			}
+
+			/* Form Inputs */
+			.form-group label {
+			font-weight: 500;
+			color: var(--text-dark);
+			}
+			.form-control {
+			border: 1px solid #ddd;
+			border-radius: 6px;
+			transition: all 0.3s ease;
+			}
+			.form-control:focus {
+			border-color: var(--primary-color);
+			box-shadow: 0 0 0 0.2rem rgba(149,194,112,0.25);
+			}
+
+			/* Submit Button */
+			.btn-primary.submit-btn {
+			background: var(--primary-color) !important;
+			border: none !important;
+			padding: 10px 20px;
+			border-radius: 6px;
+			transition: 0.3s;
+			font-weight: 500;
+			}
+			.btn-primary.submit-btn:hover {
+			background: var(--primary-hover) !important;
+			}
+
+		</style>
 		<!--[if lt IE 9]>
 			<script src="assets/js/html5shiv.min.js"></script>
 			<script src="assets/js/respond.min.js"></script>
