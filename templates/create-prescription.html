@@ -264,41 +264,41 @@
         text-align: right;
         padding-top: 20px;
       }
-          /* Breadcrumb Bar */
-    .breadcrumb-bar {
-      background: var(--primary-color);
-      padding: 1.2rem 1rem;
-      box-shadow: 0 3px 8px var(--shadow-light);
-      border-radius: 0 0 12px 12px;
-      margin-bottom: 1.5rem;
-    }
-    .breadcrumb-bar .breadcrumb {
-      background: transparent;
-      padding: 0;
-      margin-bottom: 0.5rem;
-      font-weight: 600;
-      color: #e9f7cf;
-      font-size: 0.95rem;
-    }
-    .breadcrumb-bar .breadcrumb-item a {
-      color: #f0f6e9;
-      transition: color 0.3s ease;
-    }
-    .breadcrumb-bar .breadcrumb-item a:hover {
-      color: #d1e89b;
-      text-decoration: underline;
-    }
-    .breadcrumb-bar .breadcrumb-item.active {
-      color: #e9f7cf;
-      cursor: default;
-    }
-    .breadcrumb-title {
-      color: #fff;
-      font-weight: 700;
-      font-size: 2rem;
-      margin: 0;
-      letter-spacing: 0.02em;
-    }
+        /* Breadcrumb Bar */
+      .breadcrumb-bar {
+        background: var(--primary-color);
+        padding: 1.2rem 1rem;
+        box-shadow: 0 3px 8px var(--shadow-light);
+        border-radius: 0 0 12px 12px;
+        margin-bottom: 1.5rem;
+      }
+      .breadcrumb-bar .breadcrumb {
+        background: transparent;
+        padding: 0;
+        margin-bottom: 0.5rem;
+        font-weight: 600;
+        color: #e9f7cf;
+        font-size: 0.95rem;
+      }
+      .breadcrumb-bar .breadcrumb-item a {
+        color: #f0f6e9;
+        transition: color 0.3s ease;
+      }
+      .breadcrumb-bar .breadcrumb-item a:hover {
+        color: #d1e89b;
+        text-decoration: underline;
+      }
+      .breadcrumb-bar .breadcrumb-item.active {
+        color: #e9f7cf;
+        cursor: default;
+      }
+      .breadcrumb-title {
+        color: #fff;
+        font-weight: 700;
+        font-size: 2rem;
+        margin: 0;
+        letter-spacing: 0.02em;
+      }
       /* Responsive adjustments */
       @media (max-width: 991px) {
         .theiaStickySidebar {
@@ -677,14 +677,12 @@
 
     <script src="{% static 'HealthStack-System/plugins/admin/slimscroll/jquery.slimscroll.min.js' %}"></script>
 
-    <script src="{% static 'HealthStack-System/js/Normal/prescription-settings.js' %}"></script>
 
     <script src="{% static 'HealthStack-System/plugins/admin/datatables/jquery.dataTables.min.js'%}"></script>
     <script src="{% static 'HealthStack-System/plugins/admin/datatables/datatables.min.js'%}"></script>
 
     <script src="{% static 'HealthStack-System/Outside_assets/js/script.js' %}"></script>
     
-    <!-- Hidden element to store test data -->
     <script id="test-data" type="application/json">
     [
       {% for test in test_names %}
@@ -721,6 +719,118 @@
         });
         return options;
       }
+      
+      $(document).ready(function() {
+        // Remove any existing click handlers to prevent duplicates
+        $(".add-test").off('click');
+        
+        // Add test functionality
+        $(".add-test").click(function() {
+          const testHtml = `
+            <div class="row form-row test-cont">
+              <div class="col-12 col-md-10 col-lg-11">
+                <div class="row form-row">
+                  <div class="col-12 col-md-5 col-lg-5">
+                    <div class="form-group">
+                      <label>Test Name</label>
+                      <select class="form-control test-name-select" name="test_name" onchange="updateTestId(this)">
+                        ${generateTestOptions()}
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-6">
+                    <div class="form-group">
+                      <label>Description</label>
+                      <input type="text" class="form-control" name="description" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-1 col-lg-1">
+                    <div class="form-group">
+                      <label>ID</label>
+                      <input type="number" class="form-control test-id-input" name="id" readonly />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-2 col-lg-1">
+                <label class="d-md-block d-sm-none d-none">&nbsp;</label>
+                <a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a>
+              </div>
+            </div>
+          `;
+          $(".test-info").append(testHtml);
+          return false;
+        });
+
+        // Add a general click handler for the trash button within the test-info div
+        $(".test-info").on('click', '.trash', function(e) {
+          e.preventDefault();
+          $(this).closest('.test-cont').remove();
+        });
+        
+        // Remove any existing click handlers to prevent duplicates
+        $(".add-medicine").off('click');
+        
+        // Add medicine functionality
+        $(".add-medicine").click(function() {
+          const medicineHtml = `
+            <div class="row form-row medicine-cont">
+              <div class="col-12 col-md-10 col-lg-11">
+                <div class="row form-row">
+                  <div class="col-12 col-md-6 col-lg-3">
+                    <div class="form-group">
+                      <label>Medicine Name</label>
+                      <input type="text" class="form-control" name="medicine_name" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-3">
+                    <div class="form-group">
+                      <label>Quantity</label>
+                      <input type="text" class="form-control" name="quantity" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-3">
+                    <div class="form-group">
+                      <label>Frequency</label>
+                      <input type="text" class="form-control" name="frequency" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-3">
+                    <div class="form-group">
+                      <label>Relation with meal</label>
+                      <input type="text" class="form-control" name="relation_with_meal" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-6">
+                    <div class="form-group">
+                      <label>Duration</label>
+                      <input type="text" class="form-control" name="duration" />
+                    </div>
+                  </div>
+                  <div class="col-12 col-md-6 col-lg-6">
+                    <div class="form-group">
+                      <label>Instruction</label>
+                      <input type="text" class="form-control" name="instruction" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-12 col-md-2 col-lg-1">
+                <label class="d-md-block d-sm-none d-none">&nbsp;</label>
+                <a href="#" class="btn btn-danger trash"><i class="far fa-trash-alt"></i></a>
+              </div>
+            </div>
+          `;
+          $(".medicine-info").append(medicineHtml);
+          return false;
+        });
+
+        // Add a general click handler for the trash button within the medicine-info div
+        $(".medicine-info").on('click', '.trash', function(e) {
+          e.preventDefault();
+          $(this).closest('.medicine-cont').remove();
+        });
+      });
     </script>
   </body>
   </html>
