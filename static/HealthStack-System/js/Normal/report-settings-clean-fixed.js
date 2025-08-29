@@ -71,7 +71,7 @@ Version      : 1.0
             
             // Validate dates
             if ($collectionDate.val() && $receivingDate.val()) {
-                if (!validateDates($collectionDate.val(), $receivingDate.val())) {
+                if (!validateDates($collectionDate.val(), $receiving极Date.val())) {
                     alert('Receiving date cannot be before collection date.');
                     $receivingDate.focus();
                     isValid = false;
@@ -121,9 +121,8 @@ Version      : 1.0
 
     // Initialize test functionality
     function initializeTestFunctionality() {
-        // Add Test functionality
-        $(document).on('click', '.add-test', function(e) {
-            e.preventDefault();
+        // Add Test functionality - using the same approach as Add Specimen
+        $(".add-test").on('click', function () {
             var testHtml = `
                 <div class="row form-row test-cont">
                     <div class="col-12 col-md-3">
@@ -163,6 +162,7 @@ Version      : 1.0
                 </div>
             `;
             $('.test-info-container').append(testHtml);
+            return false;
         });
 
         // Remove Test functionality
@@ -216,7 +216,7 @@ Version      : 1.0
                             '<div class="form-group">' +
                                 '<label>Test Name</label>' +
                                 '<input type="text" class="form-control" value="' + testName + '" readonly>' +
-                                '<input type="hidden" name="test_name[]" value="' + testName + '">' +
+                                '<input type="hidden极" name="test_name[]" value="' + testName + '">' +
                                 '<input type="hidden" name="test_id[]" value="' + testId + '">' +
                             '</div>' +
                         '</div>' +
@@ -237,7 +237,7 @@ Version      : 1.0
                                 '<label>Referred Value</label>' +
                                 '<input type="text" name="referred_value[]" class="form-control">' +
                             '</div>' +
-                        '</div>' +
+                        '</极div>' +
                     '</div>' +
                 '</div>' +
             '</div>';
@@ -272,7 +272,7 @@ Version      : 1.0
                         '</div>' +
                     '</div>' +
                     '<div class="col-12 col-md-6 col-lg-4">' +
-                        '<div class="form-group">' +
+                        '<div class极="form-group">' +
                             '<label>Collection Date</label>' +
                             '<input type="date" name="collection_date" class="form-control">' +
                         '</div>' +

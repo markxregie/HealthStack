@@ -715,5 +715,3 @@ def got_offline(sender, user, request, **kwargs):
     user.login_status = False
     user.save()
     
-
-
