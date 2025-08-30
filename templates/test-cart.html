@@ -199,7 +199,7 @@
     <a href="{% url 'test-remove-cart' test.id %}"><span class="icon-close"></span></a>
   </td>
   <td>{{ test.item.test_info_id }}</td>
-  <td>{{ test.item.test_name }}</td>
+                                            <td>{{ test.item.actual_test_name }}</td>
   <td class="price">{{ test.item.test_info_price }}</td>
 </tr>
 {% endfor %}
