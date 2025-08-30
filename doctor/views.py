@@ -13,9 +13,8 @@ from django.contrib import messages
 from django.views.decorators.cache import cache_control
 from hospital.models import User, Patient
 from hospital_admin.models import Admin_Information,Clinical_Laboratory_Technician
-from .models import Doctor_Information, Appointment, Education, Experience, Prescription_medicine, Report,Specimen,Test, Prescription_test, Prescription, Doctor_review
+from .models import Doctor_Information, Appointment, Education, Experience, Prescription_medicine, Report,Specimen,Test, Prescription_test, Prescription, Doctor_review, testOrder
 from hospital_admin.models import Admin_Information,Clinical_Laboratory_Technician, Test_Information
-from .models import Doctor_Information, Appointment, Education, Experience, Prescription_medicine, Report,Specimen,Test, Prescription_test, Prescription
 from django.db.models import Q, Count
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
@@ -521,6 +520,9 @@ def create_prescription(request,pk):
                 prescription.create_date = create_date
                 
                 prescription.save()
+
+                # Create a new testOrder for this prescription (One Order per Prescription)
+                test_order = testOrder.objects.create(user=patient.user, payment_status="pending")
 
                 for i in range(len(medicine_name)):
                     medicine = Prescription_medicine(prescription=prescription)

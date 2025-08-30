@@ -215,13 +215,13 @@
                           <hr>
                         </div>
                         <p class="text-center">
-                          {% if test_order.payment_status != 'paid' and test_order.payment_status != 'failed' %}
+                          {% if test_order.payment_status|lower != 'paid' and test_order.payment_status|lower != 'failed' %}
                           <a href="{% url 'paymongo-test-payment' prescription_id patient.pk test_order.id %}">
                             <button class="btn btn-primary py-3 px-4">Proceed to Payment</button>
                           </a>
-                          {% elif test_order.payment_status == 'paid' %}
+                          {% elif test_order.payment_status|lower == 'paid' %}
                           <button class="btn btn-success py-3 px-4" disabled>Payment Completed</button>
-                          {% elif test_order.payment_status == 'failed' %}
+                          {% elif test_order.payment_status|lower == 'failed' %}
                           <a href="{% url 'paymongo-test-payment' prescription_id patient.pk test_order.id %}">
                             <button class="btn btn-warning py-3 px-4">Retry Payment</button>
                           </a>

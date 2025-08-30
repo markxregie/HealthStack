@@ -222,8 +222,12 @@
                                             <td class="text-center">{{pt.test_info_price}}</td>
                                             <td class="text-center">
                                                 {% if pt.test_info_id and pt.test_info_id.strip %}
-                                                <a href="{% url 'test-add-to-cart' prescription.prescription_id pt.test_info_id %}" 
-                                                   class="btn btn-sm btn-success">Add to Cart</a>
+                                                    {% if pt.test_info_id in cart_test_ids %}
+                                                    <span class="text-success">Added to Cart</span>
+                                                    {% else %}
+                                                    <a href="{% url 'test-add-to-cart' prescription.prescription_id pt.test_info_id %}" 
+                                                       class="btn btn-sm btn-success">Add to Cart</a>
+                                                    {% endif %}
                                                 {% else %}
                                                 <span class="text-muted">N/A</span>
                                                 {% endif %}

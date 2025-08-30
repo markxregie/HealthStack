@@ -657,13 +657,7 @@
   {% if payment.currency_amount %}
     {{ payment.currency_amount }} PHP
   {% elif payment.test_order %}
-    {% with total=0 %}
-      {% for cart in payment.test_order.orderitems.all %}
-        {% with total=total|add:cart.total %}
-        {% endwith %}
-      {% endfor %}
-      {{ total }} PHP
-    {% endwith %}
+    {{ payment.test_order.final_bill }} PHP
   {% else %}
     0.00 PHP
   {% endif %}
@@ -677,9 +671,9 @@
 
               <!-- Payment Status -->
               <td>
-                {% if payment.status == 'paid' %}
+                {% if payment.status|lower == 'paid' %}
                   <span class="badge bg-success-light">Success</span>
-                {% elif payment.status == 'FAILED' %}
+                {% elif payment.status|lower == 'failed' %}
                   <span class="badge bg-danger-light">Failed</span>
                 {% else %}
                   <span class="badge bg-warning-light">Pending</span>
