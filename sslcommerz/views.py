@@ -170,7 +170,7 @@ def ssl_payment_request_medicine(request, pk, id):
     invoice_number = generate_random_invoice()
     
     post_body = {}
-    post_body['total_amount'] = order.final_bill()
+    post_body['total_amount'] = order.final_bill
     post_body['currency'] = "BDT"
     post_body['tran_id'] = generate_random_string()
 
@@ -285,7 +285,7 @@ def paymongo_test_payment_request(request, pk, id, pk2):
                             "name": f"Test Order #{test_order.id}",
                             "quantity": 1,
                             "currency": "PHP",
-                            "amount": int(float(test_order.final_bill()) * 100),
+                    "amount": int(float(test_order.final_bill) * 100),
                         }
                     ],
                     "payment_method_types": ["card"],

@@ -556,12 +556,19 @@ def test_add_to_cart(request, prescription_id, test_info_id):
             purchased=False
         )
 
-        # Get or create an active testOrder for the user
-        order_qs = testOrder.objects.filter(user=request.user, ordered=False)
+        # Get or create a testOrder specifically for this prescription
+        # One Order per Prescription approach
+        order_qs = testOrder.objects.filter(
+            user=request.user, 
+            ordered=False,
+            orderitems__item__prescription__prescription_id=prescription_id
+        ).distinct()
+        
         if order_qs.exists():
             order = order_qs.first()
         else:
-            order = testOrder.objects.create(user=request.user)
+            # Create a new testOrder for this prescription
+            order = testOrder.objects.create(user=request.user, payment_status="pending")
 
         # Add cart item to order
         order.orderitems.add(cart_item)
@@ -580,14 +587,33 @@ def test_cart(request, pk):
         prescription = Prescription.objects.filter(prescription_id=pk)
         patient = Patient.objects.get(user=request.user)
         prescription_test = Prescription_test.objects.all()
-        test_carts = testCart.objects.filter(user=request.user, purchased=False)
-        test_orders = testOrder.objects.filter(user=request.user, ordered=False)
+        
+        # Get test carts for the current prescription
+        test_carts = testCart.objects.filter(
+            user=request.user, 
+            purchased=False,
+            item__prescription__prescription_id=pk
+        )
+        
+        # Get test orders that contain items from the current prescription
+        test_orders = testOrder.objects.filter(
+            user=request.user, 
+            ordered=False,
+            orderitems__item__prescription__prescription_id=pk
+        ).distinct()
 
         if test_carts.exists() and test_orders.exists():
             test_order = test_orders[0]
             
-            # Calculate total amount
-            total_amount = test_order.total_amount if hasattr(test_order, 'total_amount') else 0
+            # Calculate total amount with VAT using final_bill property
+            total_amount = test_order.final_bill if hasattr(test_order, 'final_bill') else 0
+            
+            # Debug: print payment status
+            print(f"Test order payment status: {test_order.payment_status}")
+            print(f"Test order ID: {test_order.id}")
+            print(f"Prescription ID: {pk}")
+            print(f"Test carts count: {test_carts.count()}")
+            print(f"Total amount: {total_amount}")
 
             context = {
                 'test_carts': test_carts,
@@ -608,10 +634,10 @@ def test_cart(request, pk):
 
 @csrf_exempt
 @login_required(login_url="login")
-def test_remove_cart(request, cart_id):
+def test_remove_cart(request, pk):
     if request.user.is_authenticated and request.user.is_patient:
         # Get the testCart item by its ID
-        cart_item = get_object_or_404(testCart, id=cart_id, user=request.user, purchased=False)
+        cart_item = get_object_or_404(testCart, id=pk, user=request.user, purchased=False)
 
         # Remove from any active testOrder
         order_qs = testOrder.objects.filter(user=request.user, ordered=False)
@@ -637,8 +663,25 @@ def prescription_view(request,pk):
         prescription = Prescription.objects.filter(prescription_id=pk)
         prescription_medicine = Prescription_medicine.objects.filter(prescription__in=prescription)
         prescription_test = Prescription_test.objects.filter(prescription__in=prescription)
+        
+        # Get test IDs that are already in the cart for this user
+        cart_test_ids = list(testCart.objects.filter(
+            user=request.user, 
+            purchased=False,
+            item__prescription__prescription_id=pk
+        ).values_list('item__test_info_id', flat=True))
+        
+        # Debug: print cart_test_ids to console
+        print(f"Cart test IDs: {cart_test_ids}")
+        print(f"Prescription test IDs: {[pt.test_info_id for pt in prescription_test]}")
 
-        context = {'patient':patient,'prescription':prescription,'prescription_test':prescription_test,'prescription_medicine':prescription_medicine}
+        context = {
+            'patient': patient,
+            'prescription': prescription,
+            'prescription_test': prescription_test,
+            'prescription_medicine': prescription_medicine,
+            'cart_test_ids': cart_test_ids
+        }
         return render(request, 'prescription-view.html',context)
       else:
          redirect('logout') 
