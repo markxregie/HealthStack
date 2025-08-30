@@ -595,6 +595,17 @@ def test_cart(request, pk):
             item__prescription__prescription_id=pk
         )
         
+        # Map test_info_id to test_name from Test_Information for cart items
+        test_info_ids = [cart.item.test_info_id for cart in test_carts if cart.item.test_info_id]
+        test_info_map = {}
+        if test_info_ids:
+            test_info_objs = Test_Information.objects.filter(test_id__in=test_info_ids)
+            test_info_map = {str(ti.test_id): ti.test_name for ti in test_info_objs}
+        
+        # Attach actual test_name to each testCart item for template use
+        for cart in test_carts:
+            cart.item.actual_test_name = test_info_map.get(str(cart.item.test_info_id), cart.item.test_name)
+        
         # Get test orders that contain items from the current prescription
         test_orders = testOrder.objects.filter(
             user=request.user, 
@@ -671,10 +682,17 @@ def prescription_view(request,pk):
             item__prescription__prescription_id=pk
         ).values_list('item__test_info_id', flat=True))
         
-        # Debug: print cart_test_ids to console
-        print(f"Cart test IDs: {cart_test_ids}")
-        print(f"Prescription test IDs: {[pt.test_info_id for pt in prescription_test]}")
-
+        # Map test_info_id to test_name from Test_Information
+        test_info_ids = [pt.test_info_id for pt in prescription_test if pt.test_info_id]
+        test_info_map = {}
+        if test_info_ids:
+            test_info_objs = Test_Information.objects.filter(test_id__in=test_info_ids)
+            test_info_map = {str(ti.test_id): ti.test_name for ti in test_info_objs}
+        
+        # Attach actual test_name to each prescription_test object for template use
+        for pt in prescription_test:
+            pt.actual_test_name = test_info_map.get(str(pt.test_info_id), pt.test_name)
+        
         context = {
             'patient': patient,
             'prescription': prescription,
