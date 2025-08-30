@@ -208,7 +208,6 @@
                                         <tr style="background-color: #95C270">
                                             <th class="text-center">Test Name</th>
                                             <th class="text-center">Description</th>
-                                            <th class="text-center">Test ID</th>
                                             <th class="text-center">Price</th>
                                             <th class="text-center">Action</th>
                                         </tr>
@@ -216,9 +215,8 @@
                                     <tbody>
                                         {% for pt in prescription_test %}
                                         <tr>
-                                            <td class="text-center">{{pt.test_name}}</td>
+                                            <td class="text-center">{{pt.actual_test_name}}</td>
                                             <td class="text-center">{{pt.test_description}}</td>
-                                            <td class="text-center">{{pt.test_info_id}}</td>
                                             <td class="text-center">{{pt.test_info_price}}</td>
                                             <td class="text-center">
                                                 {% if pt.test_info_id and pt.test_info_id.strip %}
